@@ -15,6 +15,8 @@ export default function SignupPage() {
     password_confirmation: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   function handleChange(event) {
     setForm({
       ...form,
@@ -25,10 +27,25 @@ export default function SignupPage() {
   async function handleSubmit(event) {
     event.preventDefault();
 
+    if (
+      !form.username ||
+      !form.email ||
+      !form.phone ||
+      !form.password ||
+      !form.password_confirmation
+    ) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    setLoading(true);
+
     const response = await api("/signup", {
       method: "POST",
       body: JSON.stringify(form),
     });
+
+    setLoading(false);
 
     if (response.ok) {
       alert("Account created successfully");
@@ -50,7 +67,8 @@ export default function SignupPage() {
           onChange={handleChange}
         />
 
-        <br /><br />
+        <br />
+        <br />
 
         <input
           name="email"
@@ -60,7 +78,8 @@ export default function SignupPage() {
           onChange={handleChange}
         />
 
-        <br /><br />
+        <br />
+        <br />
 
         <input
           name="phone"
@@ -69,7 +88,8 @@ export default function SignupPage() {
           onChange={handleChange}
         />
 
-        <br /><br />
+        <br />
+        <br />
 
         <input
           name="password"
@@ -79,7 +99,8 @@ export default function SignupPage() {
           onChange={handleChange}
         />
 
-        <br /><br />
+        <br />
+        <br />
 
         <input
           name="password_confirmation"
@@ -89,10 +110,11 @@ export default function SignupPage() {
           onChange={handleChange}
         />
 
-        <br /><br />
+        <br />
+        <br />
 
-        <button type="submit">
-          Create Account
+        <button type="submit" disabled={loading}>
+          {loading ? "Creating Account..." : "Create Account"}
         </button>
       </form>
     </main>

@@ -9,20 +9,28 @@ export default function DashboardPage() {
   const router = useRouter();
 
   const [user, setUser] = useState(null);
+  const [workspaces, setWorkspaces] = useState([]);
 
   useEffect(() => {
-    async function getProfile() {
-      const response = await api("/profile");
+    async function loadDashboard() {
+      const profileResponse = await api("/profile");
 
-      if (response.ok) {
-        setUser(response.data);
-      } else {
+      if (!profileResponse.ok) {
         removeToken();
         router.push("/login");
+        return;
+      }
+
+      setUser(profileResponse.data);
+
+      const workspaceResponse = await api("/workspaces");
+
+      if (workspaceResponse.ok) {
+        setWorkspaces(workspaceResponse.data);
       }
     }
 
-    getProfile();
+    loadDashboard();
   }, [router]);
 
   function handleLogout() {
@@ -43,6 +51,22 @@ export default function DashboardPage() {
       <p>Email: {user.email}</p>
 
       <p>Phone: {user.phone}</p>
+
+      <hr />
+
+      <h2>Your Workspaces</h2>
+
+      {workspaces.length === 0 ? (
+        <p>No workspaces found.</p>
+      ) : (
+        <ul>
+          {workspaces.map((workspace) => (
+            <li key={workspace.id}>{workspace.name}</li>
+          ))}
+        </ul>
+      )}
+
+      <br />
 
       <button onClick={handleLogout}>Logout</button>
     </main>

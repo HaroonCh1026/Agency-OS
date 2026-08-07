@@ -13,6 +13,8 @@ export default function LoginPage() {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   function handleChange(event) {
     setForm({
       ...form,
@@ -23,10 +25,19 @@ export default function LoginPage() {
   async function handleSubmit(event) {
     event.preventDefault();
 
+    if (!form.login || !form.password) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    setLoading(true);
+
     const response = await api("/login", {
       method: "POST",
       body: JSON.stringify(form),
     });
+
+    setLoading(false);
 
     if (response.ok) {
       saveToken(response.data.token);
@@ -63,7 +74,9 @@ export default function LoginPage() {
         <br />
         <br />
 
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
       </form>
     </main>
   );
