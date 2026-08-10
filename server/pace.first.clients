@@ -1,0 +1,16 @@
+=> 
+[32m#<Client:0x0000028f2ccb0260[0m
+ [36mid[0m: [34m[1m1[0m,
+ [36mname[0m: [31m[1m"[0m[31mTest Client[0m[31m[1m"[0m,
+ [36mcompany[0m: [36m[1mnil[0m,
+ [36memail[0m: [36m[1mnil[0m,
+ [36mphone[0m: [36m[1mnil[0m,
+ [36maddress[0m: [36m[1mnil[0m,
+ [36mcity[0m: [36m[1mnil[0m,
+ [36mcountry[0m: [36m[1mnil[0m,
+ [36mwebsite[0m: [36m[1mnil[0m,
+ [36mnotes[0m: [36m[1mnil[0m,
+ [36mstatus[0m: [31m[1m"[0m[31mactive[0m[31m[1m"[0m,
+ [36mworkspace_id[0m: [34m[1m1[0m,
+ [36mcreated_at[0m: [31m[1m"[0m[31m2026-08-10 14:29:09.643067000 +0000[0m[31m[1m"[0m,
+ [36mupdated_at[0m: [31m[1m"[0m[31m2026-08-10 14:29:09.643067000 +0000[0m[31m[1m"[0m[32m>[0m

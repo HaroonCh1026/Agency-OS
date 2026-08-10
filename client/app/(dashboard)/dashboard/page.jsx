@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "../../services/api";
-import { removeToken } from "../../utils/storage";
+import { api } from "../../../services/api";
+import { removeToken } from "../../../utils/storage";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -33,13 +33,8 @@ export default function DashboardPage() {
     loadDashboard();
   }, [router]);
 
-  function handleLogout() {
-    removeToken();
-    router.push("/login");
-  }
-
   if (!user) {
-    return <h2>Loading...</h2>;
+    return <p>Loading...</p>;
   }
 
   return (
@@ -65,10 +60,6 @@ export default function DashboardPage() {
           ))}
         </ul>
       )}
-
-      <br />
-
-      <button onClick={handleLogout}>Logout</button>
     </main>
   );
 }
