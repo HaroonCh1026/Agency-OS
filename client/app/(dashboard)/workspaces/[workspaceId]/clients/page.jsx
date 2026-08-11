@@ -3,6 +3,9 @@
 import { use, useEffect, useState } from "react";
 import { api } from "../../../../../services/api";
 
+import ClientForm from "./components/ClientForm";
+import ClientList from "./components/ClientList";
+
 const emptyForm = {
   name: "",
   company: "",
@@ -21,13 +24,16 @@ export default function ClientsPage({ params }) {
 
   const [clients, setClients] = useState([]);
   const [form, setForm] = useState(emptyForm);
-
   const [loading, setLoading] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
 
   useEffect(() => {
     loadClients();
   }, [workspaceId]);
+
+  // =========================
+  // Load Clients
+  // =========================
 
   async function loadClients() {
     const response = await api(`/workspaces/${workspaceId}/clients`);
@@ -44,17 +50,18 @@ export default function ClientsPage({ params }) {
     }
   }
 
-  function handleChange(event) {
-    setForm({
-      ...form,
-      [event.target.name]: event.target.value,
-    });
-  }
+  // =========================
+  // Reset Form
+  // =========================
 
   function resetForm() {
     setForm(emptyForm);
     setEditingClient(null);
   }
+
+  // =========================
+  // Create / Update Client
+  // =========================
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -111,6 +118,10 @@ export default function ClientsPage({ params }) {
     }
   }
 
+  // =========================
+  // Edit Client
+  // =========================
+
   function handleEdit(client) {
     setEditingClient(client);
 
@@ -127,6 +138,10 @@ export default function ClientsPage({ params }) {
       status: client.status || "active",
     });
   }
+
+  // =========================
+  // Delete Client
+  // =========================
 
   async function handleDelete(clientId) {
     const confirmed = window.confirm(
@@ -162,176 +177,53 @@ export default function ClientsPage({ params }) {
     }
   }
 
+  // =========================
+  // UI
+  // =========================
+
   return (
-    <main>
-      <h1>Clients</h1>
+    <main className="min-h-full bg-gray-50 p-4 sm:p-6 lg:p-8">
+      {/* Page Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Clients</h1>
 
-      <hr />
+        <p className="mt-1 text-sm text-gray-500">
+          Manage the clients in this workspace.
+        </p>
+      </div>
 
-      <h2>{editingClient ? "Edit Client" : "Add Client"}</h2>
-
-      <form onSubmit={handleSubmit}>
-        <input
-          name="name"
-          placeholder="Name"
-          value={form.name}
-          onChange={handleChange}
+      {/* Client Form */}
+      <div className="mb-8">
+        <ClientForm
+          form={form}
+          setForm={setForm}
+          editingClient={editingClient}
+          loading={loading}
+          onSubmit={handleSubmit}
+          onCancel={resetForm}
         />
+      </div>
 
-        <br />
-        <br />
+      {/* Client List */}
+      <section>
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Your Clients
+            </h2>
 
-        <input
-          name="company"
-          placeholder="Company"
-          value={form.company}
-          onChange={handleChange}
+            <p className="mt-1 text-sm text-gray-500">
+              {clients.length} {clients.length === 1 ? "client" : "clients"}
+            </p>
+          </div>
+        </div>
+
+        <ClientList
+          clients={clients}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
-
-        <br />
-        <br />
-
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-        />
-
-        <br />
-        <br />
-
-        <input
-          name="phone"
-          placeholder="Phone"
-          value={form.phone}
-          onChange={handleChange}
-        />
-
-        <br />
-        <br />
-
-        <input
-          name="address"
-          placeholder="Address"
-          value={form.address}
-          onChange={handleChange}
-        />
-
-        <br />
-        <br />
-
-        <input
-          name="city"
-          placeholder="City"
-          value={form.city}
-          onChange={handleChange}
-        />
-
-        <br />
-        <br />
-
-        <input
-          name="country"
-          placeholder="Country"
-          value={form.country}
-          onChange={handleChange}
-        />
-
-        <br />
-        <br />
-
-        <input
-          name="website"
-          placeholder="Website"
-          value={form.website}
-          onChange={handleChange}
-        />
-
-        <br />
-        <br />
-
-        <textarea
-          name="notes"
-          placeholder="Notes"
-          value={form.notes}
-          onChange={handleChange}
-        />
-
-        <br />
-        <br />
-
-        <select name="status" value={form.status} onChange={handleChange}>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-
-        <br />
-        <br />
-
-        <button type="submit" disabled={loading}>
-          {loading
-            ? editingClient
-              ? "Updating..."
-              : "Creating..."
-            : editingClient
-              ? "Update Client"
-              : "Create Client"}
-        </button>
-
-        {editingClient && (
-          <>
-            {" "}
-            <button type="button" onClick={resetForm} disabled={loading}>
-              Cancel
-            </button>
-          </>
-        )}
-      </form>
-
-      <hr />
-
-      <h2>Your Clients</h2>
-
-      {clients.length === 0 ? (
-        <p>No clients found.</p>
-      ) : (
-        <ul>
-          {clients.map((client) => (
-            <li key={client.id}>
-              <strong>{client.name}</strong>
-              <br />
-              Company: {client.company || "N/A"}
-              <br />
-              Email: {client.email || "N/A"}
-              <br />
-              Phone: {client.phone || "N/A"}
-              <br />
-              Address: {client.address || "N/A"}
-              <br />
-              City: {client.city || "N/A"}
-              <br />
-              Country: {client.country || "N/A"}
-              <br />
-              Website: {client.website || "N/A"}
-              <br />
-              Status: {client.status || "N/A"}
-              <br />
-              Notes: {client.notes || "N/A"}
-              <br />
-              <br />
-              <button type="button" onClick={() => handleEdit(client)}>
-                Edit
-              </button>{" "}
-              <button type="button" onClick={() => handleDelete(client.id)}>
-                Delete
-              </button>
-              <hr />
-            </li>
-          ))}
-        </ul>
-      )}
+      </section>
     </main>
   );
 }

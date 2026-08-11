@@ -12,6 +12,7 @@ class WorkspacesController < ApplicationController
     render json: @workspace, status: :ok
   end
 
+
   def create
     workspace = @current_user.workspaces.new(workspace_params)
 
