@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { api } from "../../../../../services/api";
+import { getApiErrorMessage } from "../../../../../services/apiErrors";
 
 import ClientForm from "./components/ClientForm";
 import ClientList from "./components/ClientList";
@@ -24,8 +25,14 @@ export default function ClientsPage({ params }) {
 
   const [clients, setClients] = useState([]);
   const [form, setForm] = useState(emptyForm);
-  const [loading, setLoading] = useState(false);
+
+  const [loading, setLoading] = useState(true);
+  const [formLoading, setFormLoading] = useState(false);
+
   const [editingClient, setEditingClient] = useState(null);
+
+  const [error, setError] = useState("");
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
     loadClients();
@@ -36,18 +43,18 @@ export default function ClientsPage({ params }) {
   // =========================
 
   async function loadClients() {
+    setLoading(true);
+    setError("");
+
     const response = await api(`/workspaces/${workspaceId}/clients`);
 
     if (response.ok) {
       setClients(response.data);
     } else {
-      const message =
-        response.data?.errors?.join("\n") ||
-        response.data?.error ||
-        "Failed to load clients.";
-
-      alert(message);
+      setError(getApiErrorMessage(response, "Failed to load clients."));
     }
+
+    setLoading(false);
   }
 
   // =========================
@@ -57,6 +64,7 @@ export default function ClientsPage({ params }) {
   function resetForm() {
     setForm(emptyForm);
     setEditingClient(null);
+    setFormError("");
   }
 
   // =========================
@@ -66,55 +74,54 @@ export default function ClientsPage({ params }) {
   async function handleSubmit(event) {
     event.preventDefault();
 
+    setFormError("");
+
+    // Frontend validation
     if (!form.name.trim()) {
-      alert("Client name is required.");
+      setFormError("Client name is required.");
       return;
     }
 
-    setLoading(true);
+    setFormLoading(true);
 
-    let response;
+    try {
+      const response = editingClient
+        ? await api(`/workspaces/${workspaceId}/clients/${editingClient.id}`, {
+            method: "PATCH",
+            body: JSON.stringify(form),
+          })
+        : await api(`/workspaces/${workspaceId}/clients`, {
+            method: "POST",
+            body: JSON.stringify(form),
+          });
 
-    if (editingClient) {
-      response = await api(
-        `/workspaces/${workspaceId}/clients/${editingClient.id}`,
-        {
-          method: "PATCH",
-          body: JSON.stringify(form),
-        },
-      );
-    } else {
-      response = await api(`/workspaces/${workspaceId}/clients`, {
-        method: "POST",
-        body: JSON.stringify(form),
-      });
-    }
+      if (response.ok) {
+        if (editingClient) {
+          setClients((currentClients) =>
+            currentClients.map((client) =>
+              client.id === editingClient.id ? response.data.client : client,
+            ),
+          );
+        } else {
+          setClients((currentClients) => [
+            ...currentClients,
+            response.data.client,
+          ]);
+        }
 
-    setLoading(false);
-
-    if (response.ok) {
-      if (editingClient) {
-        setClients(
-          clients.map((client) =>
-            client.id === editingClient.id ? response.data.client : client,
+        resetForm();
+      } else {
+        setFormError(
+          getApiErrorMessage(
+            response,
+            editingClient
+              ? "Unable to update client."
+              : "Unable to create client.",
           ),
         );
-
-        alert("Client updated successfully.");
-      } else {
-        setClients([...clients, response.data.client]);
-
-        alert("Client created successfully.");
       }
-
-      resetForm();
-    } else {
-      const message =
-        response.data?.errors?.join("\n") ||
-        response.data?.error ||
-        "Something went wrong.";
-
-      alert(message);
+    } finally {
+      setFormLoading(false);
     }
   }
 
@@ -136,6 +143,13 @@ export default function ClientsPage({ params }) {
       website: client.website || "",
       notes: client.notes || "",
       status: client.status || "active",
+    });
+
+    setFormError("");
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
     });
   }
 
@@ -160,25 +174,46 @@ export default function ClientsPage({ params }) {
     );
 
     if (response.ok) {
-      setClients(clients.filter((client) => client.id !== clientId));
+      setClients((currentClients) =>
+        currentClients.filter((client) => client.id !== clientId),
+      );
 
       if (editingClient?.id === clientId) {
         resetForm();
       }
-
-      alert("Client deleted successfully.");
     } else {
-      const message =
-        response.data?.errors?.join("\n") ||
-        response.data?.error ||
-        "Failed to delete client.";
-
-      alert(message);
+      setError(getApiErrorMessage(response, "Failed to delete client."));
     }
   }
 
   // =========================
-  // UI
+  // Initial Loading UI
+  // =========================
+
+  if (loading) {
+    return (
+      <main className="min-h-full bg-gray-50 p-4 sm:p-6 lg:p-8">
+        <div className="animate-pulse space-y-6">
+          <div>
+            <div className="h-8 w-32 rounded bg-gray-200" />
+
+            <div className="mt-2 h-4 w-64 rounded bg-gray-200" />
+          </div>
+
+          <div className="h-72 rounded-xl bg-gray-200" />
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="h-64 rounded-xl bg-gray-200" />
+            <div className="h-64 rounded-xl bg-gray-200" />
+            <div className="h-64 rounded-xl bg-gray-200" />
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // =========================
+  // Main UI
   // =========================
 
   return (
@@ -192,13 +227,29 @@ export default function ClientsPage({ params }) {
         </p>
       </div>
 
+      {/* API Error */}
+      {error && (
+        <div className="mb-6 flex flex-col gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 sm:flex-row sm:items-center sm:justify-between">
+          <span>{error}</span>
+
+          <button
+            type="button"
+            onClick={loadClients}
+            className="font-medium underline hover:no-underline"
+          >
+            Try again
+          </button>
+        </div>
+      )}
+
       {/* Client Form */}
       <div className="mb-8">
         <ClientForm
           form={form}
           setForm={setForm}
           editingClient={editingClient}
-          loading={loading}
+          loading={formLoading}
+          error={formError}
           onSubmit={handleSubmit}
           onCancel={resetForm}
         />

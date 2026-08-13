@@ -1,8 +1,11 @@
+"use client";
+
 export default function ClientForm({
   form,
   setForm,
   editingClient,
   loading,
+  error,
   onSubmit,
   onCancel,
 }) {
@@ -27,6 +30,16 @@ export default function ClientForm({
         </p>
       </div>
 
+      {/* Form Error */}
+      {error && (
+        <div
+          role="alert"
+          className="mb-6 whitespace-pre-line rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
+        >
+          {error}
+        </div>
+      )}
+
       <form onSubmit={onSubmit} className="space-y-5">
         {/* Name */}
         <div>
@@ -44,7 +57,8 @@ export default function ClientForm({
             placeholder="Client name"
             value={form.name}
             onChange={handleChange}
-            className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+            disabled={loading}
+            className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
           />
         </div>
 
@@ -64,7 +78,8 @@ export default function ClientForm({
             placeholder="Company name"
             value={form.company}
             onChange={handleChange}
-            className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+            disabled={loading}
+            className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
           />
         </div>
 
@@ -85,7 +100,8 @@ export default function ClientForm({
               placeholder="client@example.com"
               value={form.email}
               onChange={handleChange}
-              className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+              disabled={loading}
+              className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
             />
           </div>
 
@@ -104,7 +120,8 @@ export default function ClientForm({
               placeholder="Phone number"
               value={form.phone}
               onChange={handleChange}
-              className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+              disabled={loading}
+              className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
             />
           </div>
         </div>
@@ -125,7 +142,8 @@ export default function ClientForm({
             placeholder="Street address"
             value={form.address}
             onChange={handleChange}
-            className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+            disabled={loading}
+            className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
           />
         </div>
 
@@ -146,7 +164,8 @@ export default function ClientForm({
               placeholder="City"
               value={form.city}
               onChange={handleChange}
-              className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+              disabled={loading}
+              className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
             />
           </div>
 
@@ -165,7 +184,8 @@ export default function ClientForm({
               placeholder="Country"
               value={form.country}
               onChange={handleChange}
-              className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+              disabled={loading}
+              className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
             />
           </div>
         </div>
@@ -186,7 +206,8 @@ export default function ClientForm({
             placeholder="https://example.com"
             value={form.website}
             onChange={handleChange}
-            className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+            disabled={loading}
+            className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
           />
         </div>
 
@@ -204,7 +225,8 @@ export default function ClientForm({
             name="status"
             value={form.status}
             onChange={handleChange}
-            className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+            disabled={loading}
+            className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
           >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -227,7 +249,8 @@ export default function ClientForm({
             placeholder="Additional notes..."
             value={form.notes}
             onChange={handleChange}
-            className="w-full resize-none rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+            disabled={loading}
+            className="w-full resize-none rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
           />
         </div>
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "../../../services/api";
+import { getApiErrorMessage } from "../../../services/apiErrors";
 
 import WorkspaceForm from "./components/WorkspaceForm";
 import WorkspaceList from "./components/WorkspaceList";
@@ -29,20 +30,18 @@ export default function WorkspacesPage() {
   }, []);
 
   async function loadWorkspaces() {
-    try {
-      const response = await api("/workspaces");
+    setLoading(true);
+    setError("");
 
-      if (response.ok) {
-        setWorkspaces(response.data);
-      } else {
-        setError("Unable to load workspaces.");
-      }
-    } catch (error) {
-      console.error(error);
-      setError("Something went wrong while loading workspaces.");
-    } finally {
-      setLoading(false);
+    const response = await api("/workspaces");
+
+    if (response.ok) {
+      setWorkspaces(response.data);
+    } else {
+      setError(getApiErrorMessage(response, "Unable to load workspaces."));
     }
+
+    setLoading(false);
   }
 
   // =========================
@@ -61,6 +60,8 @@ export default function WorkspacesPage() {
   async function handleSubmit(event) {
     event.preventDefault();
 
+    setError("");
+
     if (!form.name.trim()) {
       alert("Workspace name is required.");
       return;
@@ -68,25 +69,21 @@ export default function WorkspacesPage() {
 
     setFormLoading(true);
 
-    let response;
-
     try {
-      if (editingWorkspace) {
-        response = await api(`/workspaces/${editingWorkspace.id}`, {
-          method: "PATCH",
-          body: JSON.stringify(form),
-        });
-      } else {
-        response = await api("/workspaces", {
-          method: "POST",
-          body: JSON.stringify(form),
-        });
-      }
+      const response = editingWorkspace
+        ? await api(`/workspaces/${editingWorkspace.id}`, {
+            method: "PATCH",
+            body: JSON.stringify(form),
+          })
+        : await api("/workspaces", {
+            method: "POST",
+            body: JSON.stringify(form),
+          });
 
       if (response.ok) {
         if (editingWorkspace) {
-          setWorkspaces(
-            workspaces.map((workspace) =>
+          setWorkspaces((currentWorkspaces) =>
+            currentWorkspaces.map((workspace) =>
               workspace.id === editingWorkspace.id
                 ? response.data.workspace
                 : workspace,
@@ -95,23 +92,25 @@ export default function WorkspacesPage() {
 
           alert("Workspace updated successfully.");
         } else {
-          setWorkspaces([...workspaces, response.data.workspace]);
+          setWorkspaces((currentWorkspaces) => [
+            ...currentWorkspaces,
+            response.data.workspace,
+          ]);
 
           alert("Workspace created successfully.");
         }
 
         resetForm();
       } else {
-        const message =
-          response.data?.errors?.join("\n") ||
-          response.data?.error ||
-          "Something went wrong.";
-
-        alert(message);
+        alert(
+          getApiErrorMessage(
+            response,
+            editingWorkspace
+              ? "Unable to update workspace."
+              : "Unable to create workspace.",
+          ),
+        );
       }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong.");
     } finally {
       setFormLoading(false);
     }
@@ -147,32 +146,22 @@ export default function WorkspacesPage() {
       return;
     }
 
-    try {
-      const response = await api(`/workspaces/${workspaceId}`, {
-        method: "DELETE",
-      });
+    const response = await api(`/workspaces/${workspaceId}`, {
+      method: "DELETE",
+    });
 
-      if (response.ok) {
-        setWorkspaces(
-          workspaces.filter((workspace) => workspace.id !== workspaceId),
-        );
+    if (response.ok) {
+      setWorkspaces((currentWorkspaces) =>
+        currentWorkspaces.filter((workspace) => workspace.id !== workspaceId),
+      );
 
-        if (editingWorkspace?.id === workspaceId) {
-          resetForm();
-        }
-
-        alert("Workspace deleted successfully.");
-      } else {
-        const message =
-          response.data?.errors?.join("\n") ||
-          response.data?.error ||
-          "Failed to delete workspace.";
-
-        alert(message);
+      if (editingWorkspace?.id === workspaceId) {
+        resetForm();
       }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong while deleting workspace.");
+
+      alert("Workspace deleted successfully.");
+    } else {
+      alert(getApiErrorMessage(response, "Failed to delete workspace."));
     }
   }
 
@@ -222,6 +211,14 @@ export default function WorkspacesPage() {
       {error && (
         <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
           {error}
+
+          <button
+            type="button"
+            onClick={loadWorkspaces}
+            className="ml-3 font-medium underline hover:no-underline"
+          >
+            Try again
+          </button>
         </div>
       )}
 
