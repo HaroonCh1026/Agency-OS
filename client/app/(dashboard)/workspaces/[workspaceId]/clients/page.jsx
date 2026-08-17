@@ -6,6 +6,8 @@ import { getApiErrorMessage } from "../../../../../services/apiErrors";
 
 import ClientForm from "./components/ClientForm";
 import ClientList from "./components/ClientList";
+import NoteForm from "./components/NoteForm";
+import NoteList from "./components/NoteList";
 
 const emptyForm = {
   name: "",
@@ -16,12 +18,15 @@ const emptyForm = {
   city: "",
   country: "",
   website: "",
-  notes: "",
   status: "active",
 };
 
 export default function ClientsPage({ params }) {
   const { workspaceId } = use(params);
+
+  // =========================
+  // Client State
+  // =========================
 
   const [clients, setClients] = useState([]);
   const [form, setForm] = useState(emptyForm);
@@ -34,13 +39,22 @@ export default function ClientsPage({ params }) {
   const [error, setError] = useState("");
   const [formError, setFormError] = useState("");
 
-  useEffect(() => {
-    loadClients();
-  }, [workspaceId]);
+  // =========================
+  // Notes State
+  // =========================
+
+  const [notes, setNotes] = useState([]);
+  const [notesLoading, setNotesLoading] = useState(false);
+  const [noteFormLoading, setNoteFormLoading] = useState(false);
+  const [noteError, setNoteError] = useState("");
 
   // =========================
   // Load Clients
   // =========================
+
+  useEffect(() => {
+    loadClients();
+  }, [workspaceId]);
 
   async function loadClients() {
     setLoading(true);
@@ -58,13 +72,17 @@ export default function ClientsPage({ params }) {
   }
 
   // =========================
-  // Reset Form
+  // Reset Client Form
   // =========================
 
   function resetForm() {
     setForm(emptyForm);
     setEditingClient(null);
     setFormError("");
+
+    // Reset notes when no client is selected
+    setNotes([]);
+    setNoteError("");
   }
 
   // =========================
@@ -102,14 +120,21 @@ export default function ClientsPage({ params }) {
               client.id === editingClient.id ? response.data.client : client,
             ),
           );
+
+          // Update selected client as well
+          setEditingClient(response.data.client);
         } else {
           setClients((currentClients) => [
             ...currentClients,
             response.data.client,
           ]);
+
+          resetForm();
         }
 
-        resetForm();
+        if (!editingClient) {
+          setForm(emptyForm);
+        }
       } else {
         setFormError(
           getApiErrorMessage(
@@ -141,11 +166,13 @@ export default function ClientsPage({ params }) {
       city: client.city || "",
       country: client.country || "",
       website: client.website || "",
-      notes: client.notes || "",
       status: client.status || "active",
     });
 
     setFormError("");
+
+    // Load notes for this client
+    loadNotes(client.id);
 
     window.scrollTo({
       top: 0,
@@ -183,6 +210,67 @@ export default function ClientsPage({ params }) {
       }
     } else {
       setError(getApiErrorMessage(response, "Failed to delete client."));
+    }
+  }
+
+  // =========================
+  // Load Notes
+  // =========================
+
+  async function loadNotes(clientId) {
+    setNotesLoading(true);
+    setNoteError("");
+
+    const response = await api(
+      `/workspaces/${workspaceId}/clients/${clientId}/notes`,
+    );
+
+    if (response.ok) {
+      setNotes(response.data);
+    } else {
+      setNotes([]);
+      setNoteError(getApiErrorMessage(response, "Failed to load notes."));
+    }
+
+    setNotesLoading(false);
+  }
+
+  // =========================
+  // Create Note
+  // =========================
+
+  async function handleCreateNote(formData) {
+    if (!editingClient) {
+      setNoteError("Please select a client first.");
+      return false;
+    }
+
+    setNoteFormLoading(true);
+    setNoteError("");
+
+    try {
+      const response = await api(
+        `/workspaces/${workspaceId}/clients/${editingClient.id}/notes`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      if (response.ok) {
+        setNotes((currentNotes) => [response.data.note, ...currentNotes]);
+
+        return true;
+      }
+
+      setNoteError(getApiErrorMessage(response, "Unable to create note."));
+
+      return false;
+    } catch (error) {
+      setNoteError("Unable to create note. Please try again.");
+      return false;
+    } finally {
+      setNoteFormLoading(false);
     }
   }
 
@@ -255,7 +343,7 @@ export default function ClientsPage({ params }) {
         />
       </div>
 
-      {/* Client List */}
+      {/* Clients */}
       <section>
         <div className="mb-4 flex items-center justify-between">
           <div>
@@ -275,6 +363,56 @@ export default function ClientsPage({ params }) {
           onDelete={handleDelete}
         />
       </section>
+
+      {/* =========================
+          Notes Section
+          ========================= */}
+
+      {editingClient && (
+        <section className="mt-10 border-t pt-8">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-gray-900">Notes</h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              Notes for{" "}
+              <span className="font-medium text-gray-700">
+                {editingClient.name}
+              </span>
+            </p>
+          </div>
+
+          {/* Create Note */}
+          <div className="mb-8">
+            <NoteForm
+              loading={noteFormLoading}
+              error={noteError}
+              onSubmit={handleCreateNote}
+            />
+          </div>
+
+          {/* Notes List */}
+          <div>
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Client Notes
+              </h3>
+
+              <p className="mt-1 text-sm text-gray-500">
+                {notes.length} {notes.length === 1 ? "note" : "notes"}
+              </p>
+            </div>
+
+            {notesLoading ? (
+              <div className="space-y-4">
+                <div className="h-32 animate-pulse rounded-xl bg-gray-200" />
+                <div className="h-32 animate-pulse rounded-xl bg-gray-200" />
+              </div>
+            ) : (
+              <NoteList notes={notes} />
+            )}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

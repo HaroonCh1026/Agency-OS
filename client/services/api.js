@@ -6,15 +6,25 @@ export async function api(path, options = {}) {
   try {
     const token = getToken();
 
+    const isFormData = options.body instanceof FormData;
+
+    const headers = {
+      ...(token && {
+        Authorization: `Bearer ${token}`,
+      }),
+      ...options.headers,
+    };
+
+    // Only set JSON content type for normal JSON requests.
+    // For FormData, the browser sets multipart/form-data
+    // together with the required boundary automatically.
+    if (!isFormData) {
+      headers["Content-Type"] = "application/json";
+    }
+
     const response = await fetch(`${API_URL}${path}`, {
       ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(token && {
-          Authorization: `Bearer ${token}`,
-        }),
-        ...options.headers,
-      },
+      headers,
     });
 
     let data = null;

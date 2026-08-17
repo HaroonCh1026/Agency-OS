@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   get "/profile", to: "auth#profile" 
 
 resources :workspaces do
-  resources :clients
+  resources :clients do
+    resources :notes, only: [:index, :create]
+  end
 end
 end
