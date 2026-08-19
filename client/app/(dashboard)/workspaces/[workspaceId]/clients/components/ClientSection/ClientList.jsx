@@ -1,5 +1,6 @@
 import ClientCard from "./ClientCard";
 
+
 export default function ClientList({ clients, onEdit, onDelete }) {
   if (clients.length === 0) {
     return (
