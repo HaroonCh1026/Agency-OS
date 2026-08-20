@@ -31,10 +31,8 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
   const [error, setError] = useState("");
   const [formError, setFormError] = useState("");
 
-  // --------------------------------------------------
-  // Load clients
-  // --------------------------------------------------
 
+  // Load clients
   useEffect(() => {
     loadClients();
   }, [workspaceId]);
@@ -54,10 +52,8 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
     setLoading(false);
   }
 
-  // --------------------------------------------------
+ 
   // Reset form
-  // --------------------------------------------------
-
   function resetForm() {
     setForm(emptyForm);
     setEditingClient(null);
@@ -68,10 +64,8 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
     }
   }
 
-  // --------------------------------------------------
+ 
   // Create / Update client
-  // --------------------------------------------------
-
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -132,10 +126,8 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
     }
   }
 
-  // --------------------------------------------------
-  // Edit client
-  // --------------------------------------------------
 
+  // Edit client
   function handleEdit(client) {
     setEditingClient(client);
 
@@ -163,10 +155,8 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
     });
   }
 
-  // --------------------------------------------------
-  // Delete client
-  // --------------------------------------------------
 
+  // Delete client
   async function handleDelete(clientId) {
     const confirmed = window.confirm(
       "Are you sure you want to delete this client?",
@@ -196,10 +186,8 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
     }
   }
 
-  // --------------------------------------------------
+ 
   // Loading
-  // --------------------------------------------------
-
   if (loading) {
     return (
       <section className="space-y-6">
@@ -222,10 +210,8 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
     );
   }
 
-  // --------------------------------------------------
-  // UI
-  // --------------------------------------------------
-
+ 
+  // UI 
   return (
     <section>
       {/* Error */}

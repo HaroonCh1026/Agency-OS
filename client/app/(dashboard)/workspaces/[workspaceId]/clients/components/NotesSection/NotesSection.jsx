@@ -14,10 +14,7 @@ export default function NotesSection({ workspaceId, client }) {
   const [noteFormLoading, setNoteFormLoading] = useState(false);
   const [noteError, setNoteError] = useState("");
 
-  // --------------------------------------------------
   // Remove duplicate notes
-  // --------------------------------------------------
-
   function normalizeNotes(noteList) {
     if (!Array.isArray(noteList)) {
       return [];
@@ -44,10 +41,7 @@ export default function NotesSection({ workspaceId, client }) {
     return uniqueNotes;
   }
 
-  // --------------------------------------------------
   // Add note safely
-  // --------------------------------------------------
-
   function addNoteIfNew(newNote) {
     if (!newNote || newNote.id === undefined || newNote.id === null) {
       return;
@@ -72,10 +66,8 @@ export default function NotesSection({ workspaceId, client }) {
     });
   }
 
-  // --------------------------------------------------
-  // Load notes
-  // --------------------------------------------------
 
+  // Load notes 
   async function loadNotes() {
     if (!client) {
       setNotes([]);
@@ -99,10 +91,8 @@ export default function NotesSection({ workspaceId, client }) {
     setNotesLoading(false);
   }
 
-  // --------------------------------------------------
-  // Load notes whenever selected client changes
-  // --------------------------------------------------
 
+  // Load notes whenever selected client changes
   useEffect(() => {
     if (!client) {
       setNotes([]);
@@ -113,10 +103,7 @@ export default function NotesSection({ workspaceId, client }) {
     loadNotes();
   }, [workspaceId, client?.id]);
 
-  // --------------------------------------------------
   // Action Cable
-  // --------------------------------------------------
-
   useEffect(() => {
     if (!client) {
       return;
@@ -163,10 +150,8 @@ export default function NotesSection({ workspaceId, client }) {
     };
   }, [workspaceId, client?.id]);
 
-  // --------------------------------------------------
-  // Create note
-  // --------------------------------------------------
 
+  // Create note
   async function handleCreateNote(formData) {
     if (!client) {
       setNoteError("Please select a client first.");
@@ -209,18 +194,14 @@ export default function NotesSection({ workspaceId, client }) {
     }
   }
 
-  // --------------------------------------------------
-  // Nothing selected
-  // --------------------------------------------------
 
+  // Nothing selected
   if (!client) {
     return null;
   }
 
-  // --------------------------------------------------
-  // UI
-  // --------------------------------------------------
 
+  // UI
   return (
     <section className="mt-10 border-t pt-8">
       <div className="mb-6">
