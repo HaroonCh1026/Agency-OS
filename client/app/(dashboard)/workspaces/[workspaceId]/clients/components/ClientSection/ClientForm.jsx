@@ -1,5 +1,7 @@
 "use client";
 
+import { Building2, Globe, Mail, MapPin, Phone, User, X } from "lucide-react";
+
 export default function ClientForm({
   form,
   setForm,
@@ -17,74 +19,105 @@ export default function ClientForm({
   }
 
   return (
-    <div className="rounded-xl border bg-white p-6 shadow-sm">
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">
-          {editingClient ? "Edit Client" : "Add Client"}
-        </h2>
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+      {/* Header */}
+      <div className="border-b border-gray-100 px-6 py-5">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100">
+                <User className="h-4 w-4 text-gray-600" />
+              </div>
 
-        <p className="mt-1 text-sm text-gray-500">
-          {editingClient
-            ? "Update the client information below."
-            : "Add a new client to this workspace."}
-        </p>
+              <div>
+                <h2 className="text-base font-semibold text-gray-900">
+                  {editingClient ? "Edit client" : "Add client"}
+                </h2>
+
+                <p className="mt-0.5 text-xs text-gray-500">
+                  {editingClient
+                    ? "Update the client's information."
+                    : "Add a new client to your workspace."}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {editingClient && (
+            <button
+              type="button"
+              onClick={onCancel}
+              disabled={loading}
+              className="rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+              aria-label="Cancel editing"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Form Error */}
+      {/* Error */}
       {error && (
-        <div
-          role="alert"
-          className="mb-6 whitespace-pre-line rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
-        >
+        <div className="mx-6 mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
           {error}
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="space-y-5">
-        {/* Name */}
-        <div>
-          <label
-            htmlFor="name"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
-          >
-            Name
-          </label>
+      {/* Form */}
+      <form onSubmit={onSubmit} className="p-6">
+        <div className="grid gap-x-5 gap-y-5 md:grid-cols-2">
+          {/* Name */}
+          <div>
+            <label
+              htmlFor="name"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
+              Client name
+            </label>
 
-          <input
-            id="name"
-            name="name"
-            type="text"
-            placeholder="Client name"
-            value={form.name}
-            onChange={handleChange}
-            disabled={loading}
-            className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
-          />
-        </div>
+            <div className="relative">
+              <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
 
-        {/* Company */}
-        <div>
-          <label
-            htmlFor="company"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
-          >
-            Company
-          </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="John Smith"
+                value={form.name}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-50"
+              />
+            </div>
+          </div>
 
-          <input
-            id="company"
-            name="company"
-            type="text"
-            placeholder="Company name"
-            value={form.company}
-            onChange={handleChange}
-            disabled={loading}
-            className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
-          />
-        </div>
+          {/* Company */}
+          <div>
+            <label
+              htmlFor="company"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
+              Company
+            </label>
 
-        {/* Email + Phone */}
-        <div className="grid gap-5 md:grid-cols-2">
+            <div className="relative">
+              <Building2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+
+              <input
+                id="company"
+                name="company"
+                type="text"
+                placeholder="Company name"
+                value={form.company}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-50"
+              />
+            </div>
+          </div>
+
+          {/* Email */}
           <div>
             <label
               htmlFor="email"
@@ -93,18 +126,23 @@ export default function ClientForm({
               Email
             </label>
 
-            <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="client@example.com"
-              value={form.email}
-              onChange={handleChange}
-              disabled={loading}
-              className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
-            />
+            <div className="relative">
+              <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="client@example.com"
+                value={form.email}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-50"
+              />
+            </div>
           </div>
 
+          {/* Phone */}
           <div>
             <label
               htmlFor="phone"
@@ -113,42 +151,48 @@ export default function ClientForm({
               Phone
             </label>
 
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              placeholder="Phone number"
-              value={form.phone}
-              onChange={handleChange}
-              disabled={loading}
-              className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
-            />
+            <div className="relative">
+              <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                placeholder="+92 300 1234567"
+                value={form.phone}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-50"
+              />
+            </div>
           </div>
-        </div>
 
-        {/* Address */}
-        <div>
-          <label
-            htmlFor="address"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
-          >
-            Address
-          </label>
+          {/* Address */}
+          <div className="md:col-span-2">
+            <label
+              htmlFor="address"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
+              Address
+            </label>
 
-          <input
-            id="address"
-            name="address"
-            type="text"
-            placeholder="Street address"
-            value={form.address}
-            onChange={handleChange}
-            disabled={loading}
-            className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
-          />
-        </div>
+            <div className="relative">
+              <MapPin className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-gray-400" />
 
-        {/* City + Country */}
-        <div className="grid gap-5 md:grid-cols-2">
+              <input
+                id="address"
+                name="address"
+                type="text"
+                placeholder="Street address"
+                value={form.address}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-50"
+              />
+            </div>
+          </div>
+
+          {/* City */}
           <div>
             <label
               htmlFor="city"
@@ -161,14 +205,15 @@ export default function ClientForm({
               id="city"
               name="city"
               type="text"
-              placeholder="City"
+              placeholder="Lahore"
               value={form.city}
               onChange={handleChange}
               disabled={loading}
-              className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
+              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-50"
             />
           </div>
 
+          {/* Country */}
           <div>
             <label
               htmlFor="country"
@@ -181,105 +226,88 @@ export default function ClientForm({
               id="country"
               name="country"
               type="text"
-              placeholder="Country"
+              placeholder="Pakistan"
               value={form.country}
               onChange={handleChange}
               disabled={loading}
-              className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
+              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-50"
             />
+          </div>
+
+          {/* Website */}
+          <div>
+            <label
+              htmlFor="website"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
+              Website
+            </label>
+
+            <div className="relative">
+              <Globe className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+
+              <input
+                id="website"
+                name="website"
+                type="url"
+                placeholder="https://example.com"
+                value={form.website}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-50"
+              />
+            </div>
+          </div>
+
+          {/* Status */}
+          <div>
+            <label
+              htmlFor="status"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
+              Status
+            </label>
+
+            <select
+              id="status"
+              name="status"
+              value={form.status}
+              onChange={handleChange}
+              disabled={loading}
+              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-50"
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
           </div>
         </div>
 
-        {/* Website */}
-        <div>
-          <label
-            htmlFor="website"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
-          >
-            Website
-          </label>
+        {/* Actions */}
+        <div className="mt-6 flex items-center justify-end gap-3 border-t border-gray-100 pt-5">
+          {editingClient && (
+            <button
+              type="button"
+              onClick={onCancel}
+              disabled={loading}
+              className="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Cancel
+            </button>
+          )}
 
-          <input
-            id="website"
-            name="website"
-            type="url"
-            placeholder="https://example.com"
-            value={form.website}
-            onChange={handleChange}
-            disabled={loading}
-            className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
-          />
-        </div>
-
-        {/* Status */}
-        <div>
-          <label
-            htmlFor="status"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
-          >
-            Status
-          </label>
-
-          <select
-            id="status"
-            name="status"
-            value={form.status}
-            onChange={handleChange}
-            disabled={loading}
-            className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
-          >
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
-
-        {/* Notes */}
-        <div>
-          <label
-            htmlFor="notes"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
-          >
-            Notes
-          </label>
-
-          <textarea
-            id="notes"
-            name="notes"
-            rows={4}
-            placeholder="Additional notes..."
-            value={form.notes}
-            onChange={handleChange}
-            disabled={loading}
-            className="w-full resize-none rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-100"
-          />
-        </div>
-
-        {/* Buttons */}
-        <div className="flex gap-3 pt-2">
           <button
             type="submit"
             disabled={loading}
-            className="rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading
               ? editingClient
                 ? "Updating..."
                 : "Creating..."
               : editingClient
-                ? "Update Client"
-                : "Create Client"}
+                ? "Update client"
+                : "Add client"}
           </button>
-
-          {editingClient && (
-            <button
-              type="button"
-              onClick={onCancel}
-              disabled={loading}
-              className="rounded-lg border px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Cancel
-            </button>
-          )}
         </div>
       </form>
     </div>

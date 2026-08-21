@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FileText } from "lucide-react";
 import { api } from "@/services/api";
 import { getApiErrorMessage } from "@/services/apiErrors";
 import { createCableConsumer } from "@/services/cable";
@@ -14,7 +15,6 @@ export default function NotesSection({ workspaceId, client }) {
   const [noteFormLoading, setNoteFormLoading] = useState(false);
   const [noteError, setNoteError] = useState("");
 
-  // Remove duplicate notes
   function normalizeNotes(noteList) {
     if (!Array.isArray(noteList)) {
       return [];
@@ -24,7 +24,7 @@ export default function NotesSection({ workspaceId, client }) {
     const seenIds = new Set();
 
     for (const note of noteList) {
-      if (!note || note.id === undefined || note.id === null) {
+      if (!note?.id) {
         continue;
       }
 
@@ -41,24 +41,19 @@ export default function NotesSection({ workspaceId, client }) {
     return uniqueNotes;
   }
 
-  // Add note safely
   function addNoteIfNew(newNote) {
-    if (!newNote || newNote.id === undefined || newNote.id === null) {
+    if (!newNote?.id) {
       return;
     }
 
     setNotes((currentNotes) => {
-      const newNoteId = String(newNote.id);
+      const noteId = String(newNote.id);
 
-      const alreadyExists = currentNotes.some(
-        (note) =>
-          note &&
-          note.id !== undefined &&
-          note.id !== null &&
-          String(note.id) === newNoteId,
+      const exists = currentNotes.some(
+        (note) => note?.id && String(note.id) === noteId,
       );
 
-      if (alreadyExists) {
+      if (exists) {
         return currentNotes;
       }
 
@@ -66,8 +61,6 @@ export default function NotesSection({ workspaceId, client }) {
     });
   }
 
-
-  // Load notes 
   async function loadNotes() {
     if (!client) {
       setNotes([]);
@@ -91,8 +84,6 @@ export default function NotesSection({ workspaceId, client }) {
     setNotesLoading(false);
   }
 
-
-  // Load notes whenever selected client changes
   useEffect(() => {
     if (!client) {
       setNotes([]);
@@ -103,7 +94,6 @@ export default function NotesSection({ workspaceId, client }) {
     loadNotes();
   }, [workspaceId, client?.id]);
 
-  // Action Cable
   useEffect(() => {
     if (!client) {
       return;
@@ -135,8 +125,6 @@ export default function NotesSection({ workspaceId, client }) {
         },
 
         received(data) {
-          console.log("Received Action Cable data:", data);
-
           if (data.type === "note_created") {
             addNoteIfNew(data.note);
           }
@@ -150,8 +138,6 @@ export default function NotesSection({ workspaceId, client }) {
     };
   }, [workspaceId, client?.id]);
 
-
-  // Create note
   async function handleCreateNote(formData) {
     if (!client) {
       setNoteError("Please select a client first.");
@@ -171,12 +157,7 @@ export default function NotesSection({ workspaceId, client }) {
       );
 
       if (response.ok) {
-        // Add the HTTP response.
-        //
-        // If Action Cable sends the same note,
-        // addNoteIfNew() prevents duplication.
         addNoteIfNew(response.data.note);
-
         return true;
       }
 
@@ -194,27 +175,33 @@ export default function NotesSection({ workspaceId, client }) {
     }
   }
 
-
-  // Nothing selected
   if (!client) {
     return null;
   }
 
-
-  // UI
   return (
-    <section className="mt-10 border-t pt-8">
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">Notes</h2>
+    <section className="mt-8 rounded-2xl border border-gray-200 bg-white">
+      {/* Header */}
+      <div className="border-b border-gray-100 px-6 py-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100">
+            <FileText className="h-4 w-4 text-gray-600" />
+          </div>
 
-        <p className="mt-1 text-sm text-gray-500">
-          Notes for{" "}
-          <span className="font-medium text-gray-700">{client.name}</span>
-        </p>
+          <div>
+            <h2 className="text-base font-semibold text-gray-900">
+              Notes & Activity
+            </h2>
+
+            <p className="mt-0.5 text-sm text-gray-500">
+              Keep track of conversations and important client details.
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Note Form */}
-      <div className="mb-8">
+      {/* Add note */}
+      <div className="border-b border-gray-100 px-6 py-6">
         <NoteForm
           loading={noteFormLoading}
           error={noteError}
@@ -222,20 +209,24 @@ export default function NotesSection({ workspaceId, client }) {
         />
       </div>
 
-      {/* Notes List */}
-      <div>
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Client Notes</h3>
+      {/* Notes */}
+      <div className="px-6 py-6">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Recent notes
+            </h3>
 
-          <p className="mt-1 text-sm text-gray-500">
-            {notes.length} {notes.length === 1 ? "note" : "notes"}
-          </p>
+            <p className="mt-1 text-xs text-gray-500">
+              {notes.length} {notes.length === 1 ? "note" : "notes"}
+            </p>
+          </div>
         </div>
 
         {notesLoading ? (
-          <div className="space-y-4">
-            <div className="h-32 animate-pulse rounded-xl bg-gray-200" />
-            <div className="h-32 animate-pulse rounded-xl bg-gray-200" />
+          <div className="space-y-3">
+            <div className="h-28 animate-pulse rounded-xl bg-gray-100" />
+            <div className="h-28 animate-pulse rounded-xl bg-gray-100" />
           </div>
         ) : (
           <NoteList notes={notes} />

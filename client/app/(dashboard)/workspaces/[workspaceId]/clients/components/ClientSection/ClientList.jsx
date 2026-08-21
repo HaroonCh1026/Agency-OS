@@ -1,11 +1,18 @@
 import ClientCard from "./ClientCard";
 
-
-export default function ClientList({ clients, onEdit, onDelete }) {
+export default function ClientList({
+  clients,
+  selectedClient,
+  onSelect,
+  onEdit,
+  onDelete,
+}) {
   if (clients.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed bg-white p-8 text-center">
-        <h3 className="text-sm font-medium text-gray-900">No clients found</h3>
+      <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
+        <h3 className="text-sm font-semibold text-gray-900">
+          No clients found
+        </h3>
 
         <p className="mt-1 text-sm text-gray-500">
           Add your first client to get started.
@@ -20,6 +27,8 @@ export default function ClientList({ clients, onEdit, onDelete }) {
         <ClientCard
           key={client.id}
           client={client}
+          selected={selectedClient?.id === client.id}
+          onSelect={onSelect}
           onEdit={onEdit}
           onDelete={onDelete}
         />

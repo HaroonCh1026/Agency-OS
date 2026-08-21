@@ -7,7 +7,11 @@ import { getApiErrorMessage } from "@/services/apiErrors";
 import ClientForm from "./ClientForm";
 import ClientList from "./ClientList";
 
-export default function ClientSection({ workspaceId, onClientSelect }) {
+export default function ClientSection({
+  workspaceId,
+  selectedClient,
+  onClientSelect,
+}) {
   const emptyForm = {
     name: "",
     company: "",
@@ -18,6 +22,7 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
     country: "",
     website: "",
     status: "active",
+    notes: "",
   };
 
   const [clients, setClients] = useState([]);
@@ -30,7 +35,6 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
 
   const [error, setError] = useState("");
   const [formError, setFormError] = useState("");
-
 
   // Load clients
   useEffect(() => {
@@ -52,19 +56,20 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
     setLoading(false);
   }
 
- 
   // Reset form
   function resetForm() {
     setForm(emptyForm);
     setEditingClient(null);
     setFormError("");
+  }
 
+  // Select client
+  function handleSelect(client) {
     if (onClientSelect) {
-      onClientSelect(null);
+      onClientSelect(client);
     }
   }
 
- 
   // Create / Update client
   async function handleSubmit(event) {
     event.preventDefault();
@@ -78,15 +83,27 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
 
     setFormLoading(true);
 
+    const clientData = {
+      name: form.name,
+      company: form.company,
+      email: form.email,
+      phone: form.phone,
+      address: form.address,
+      city: form.city,
+      country: form.country,
+      website: form.website,
+      status: form.status,
+    };
+
     try {
       const response = editingClient
         ? await api(`/workspaces/${workspaceId}/clients/${editingClient.id}`, {
             method: "PATCH",
-            body: JSON.stringify(form),
+            body: JSON.stringify(clientData),
           })
         : await api(`/workspaces/${workspaceId}/clients`, {
             method: "POST",
-            body: JSON.stringify(form),
+            body: JSON.stringify(clientData),
           });
 
       if (response.ok) {
@@ -126,7 +143,6 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
     }
   }
 
-
   // Edit client
   function handleEdit(client) {
     setEditingClient(client);
@@ -141,6 +157,7 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
       country: client.country || "",
       website: client.website || "",
       status: client.status || "active",
+      notes: client.notes || "",
     });
 
     setFormError("");
@@ -154,7 +171,6 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
       behavior: "smooth",
     });
   }
-
 
   // Delete client
   async function handleDelete(clientId) {
@@ -178,6 +194,10 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
         currentClients.filter((client) => client.id !== clientId),
       );
 
+      if (selectedClient?.id === clientId && onClientSelect) {
+        onClientSelect(null);
+      }
+
       if (editingClient?.id === clientId) {
         resetForm();
       }
@@ -186,7 +206,6 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
     }
   }
 
- 
   // Loading
   if (loading) {
     return (
@@ -194,7 +213,6 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
         <div className="animate-pulse space-y-6">
           <div>
             <div className="h-8 w-32 rounded bg-gray-200" />
-
             <div className="mt-2 h-4 w-64 rounded bg-gray-200" />
           </div>
 
@@ -210,8 +228,6 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
     );
   }
 
- 
-  // UI 
   return (
     <section>
       {/* Error */}
@@ -258,6 +274,8 @@ export default function ClientSection({ workspaceId, onClientSelect }) {
 
         <ClientList
           clients={clients}
+          selectedClient={selectedClient}
+          onSelect={handleSelect}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
