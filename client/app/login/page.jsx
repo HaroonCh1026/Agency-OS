@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "../../services/api";
 import { saveToken } from "../../utils/storage";
@@ -13,6 +14,8 @@ export default function LoginPage() {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   function handleChange(event) {
     setForm({
       ...form,
@@ -23,48 +26,137 @@ export default function LoginPage() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const response = await api("/login", {
-      method: "POST",
-      body: JSON.stringify(form),
-    });
+    if (!form.login || !form.password) {
+      alert("Please fill in all fields.");
+      return;
+    }
 
-    if (response.ok) {
-      saveToken(response.data.token);
-      router.push("/dashboard");
-    } else {
-      alert(response.data.error);
+    setLoading(true);
+
+    try {
+      const response = await api("/login", {
+        method: "POST",
+        body: JSON.stringify(form),
+      });
+
+      if (response.ok) {
+        saveToken(response.data.token);
+        router.push("/dashboard");
+      } else {
+        alert(
+          response.data?.error ||
+            "Invalid username/email or password.",
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <main>
-      <h1>Login</h1>
+    <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-md">
+        {/* Brand */}
+        <div className="mb-8 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gray-900 text-lg font-bold text-white">
+            A
+          </div>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="login"
-          placeholder="Username or Email"
-          value={form.login}
-          onChange={handleChange}
-        />
+          <h1 className="mt-4 text-2xl font-bold text-gray-900">
+            Agency OS
+          </h1>
 
-        <br />
-        <br />
+          <p className="mt-2 text-sm text-gray-500">
+            Sign in to manage your agency
+          </p>
+        </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-        />
+        {/* Login Card */}
+        <div className="rounded-2xl border bg-white p-6 shadow-sm sm:p-8">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-gray-900">
+              Welcome back
+            </h2>
 
-        <br />
-        <br />
+            <p className="mt-1 text-sm text-gray-500">
+              Enter your account details to continue.
+            </p>
+          </div>
 
-        <button type="submit">Login</button>
-      </form>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Login */}
+            <div>
+              <label
+                htmlFor="login"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Username or Email
+              </label>
+
+              <input
+                id="login"
+                type="text"
+                name="login"
+                placeholder="Enter username or email"
+                value={form.login}
+                onChange={handleChange}
+                autoComplete="username"
+                className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Password
+              </label>
+
+              <input
+                id="password"
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                value={form.password}
+                onChange={handleChange}
+                autoComplete="current-password"
+                className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+              />
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
+
+          {/* Signup */}
+          <div className="mt-6 border-t pt-6 text-center">
+            <p className="text-sm text-gray-500">
+              Don't have an account?{" "}
+              <Link
+                href="/signup"
+                className="font-medium text-gray-900 hover:underline"
+              >
+                Create account
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-6 text-center text-xs text-gray-400">
+          Agency OS
+        </p>
+      </div>
     </main>
   );
 }

@@ -1,5 +1,4 @@
 class ApplicationController < ActionController::API
-
   private
 
   def generate_token(user)
@@ -29,16 +28,14 @@ class ApplicationController < ActionController::API
     return nil unless decoded_token
 
     user_id = decoded_token[0]["user_id"]
-
     User.find_by(id: user_id)
   end
 
   def authenticate_user
-  @current_user = current_user
+    @current_user = current_user
 
-  unless @current_user
-    render json: { error: "Unauthorized" }, status: :unauthorized
+    unless @current_user
+      render json: { error: "Unauthorized" }, status: :unauthorized
+    end
   end
-  end
-
 end

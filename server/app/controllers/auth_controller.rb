@@ -39,12 +39,12 @@ class AuthController < ApplicationController
   end
 
   def profile
-  render json: {
-    id: @current_user.id,
-    username: @current_user.username,
-    email: @current_user.email,
-    phone: @current_user.phone
-  }
+    render json: {
+      id: @current_user.id,
+      username: @current_user.username,
+      email: @current_user.email,
+      phone: @current_user.phone
+    }
   end
 
   private
