@@ -14,10 +14,6 @@ export async function api(path, options = {}) {
       }),
       ...options.headers,
     };
-
-    // Only set JSON content type for normal JSON requests.
-    // For FormData, the browser sets multipart/form-data
-    // together with the required boundary automatically.
     if (!isFormData) {
       headers["Content-Type"] = "application/json";
     }
