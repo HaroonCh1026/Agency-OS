@@ -8,6 +8,7 @@ import { createCableConsumer } from "@/services/cable";
 
 import NoteForm from "./NoteForm";
 import NoteList from "./NoteList";
+import AiSection from "./AiSection";
 
 export default function NotesSection({ workspaceId, client }) {
   const [notes, setNotes] = useState([]);
@@ -180,58 +181,63 @@ export default function NotesSection({ workspaceId, client }) {
   }
 
   return (
-    <section className="mt-8 rounded-2xl border border-gray-200 bg-white">
-      {/* Header */}
-      <div className="border-b border-gray-100 px-6 py-5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100">
-            <FileText className="h-4 w-4 text-gray-600" />
-          </div>
+    <>
+      <section className="mt-8 rounded-2xl border border-gray-200 bg-white">
+        {/* Header */}
+        <div className="border-b border-gray-100 px-6 py-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100">
+              <FileText className="h-4 w-4 text-gray-600" />
+            </div>
 
-          <div>
-            <h2 className="text-base font-semibold text-gray-900">
-              Notes & Activity
-            </h2>
+            <div>
+              <h2 className="text-base font-semibold text-gray-900">
+                Notes & Activity
+              </h2>
 
-            <p className="mt-0.5 text-sm text-gray-500">
-              Keep track of conversations and important client details.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Add note */}
-      <div className="border-b border-gray-100 px-6 py-6">
-        <NoteForm
-          loading={noteFormLoading}
-          error={noteError}
-          onSubmit={handleCreateNote}
-        />
-      </div>
-
-      {/* Notes */}
-      <div className="px-6 py-6">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-semibold text-gray-900">
-              Recent notes
-            </h3>
-
-            <p className="mt-1 text-xs text-gray-500">
-              {notes.length} {notes.length === 1 ? "note" : "notes"}
-            </p>
+              <p className="mt-0.5 text-sm text-gray-500">
+                Keep track of conversations and important client details.
+              </p>
+            </div>
           </div>
         </div>
 
-        {notesLoading ? (
-          <div className="space-y-3">
-            <div className="h-28 animate-pulse rounded-xl bg-gray-100" />
-            <div className="h-28 animate-pulse rounded-xl bg-gray-100" />
+        {/* Add note */}
+        <div className="border-b border-gray-100 px-6 py-6">
+          <NoteForm
+            loading={noteFormLoading}
+            error={noteError}
+            onSubmit={handleCreateNote}
+          />
+        </div>
+
+        {/* Notes */}
+        <div className="px-6 py-6">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900">
+                Recent notes
+              </h3>
+
+              <p className="mt-1 text-xs text-gray-500">
+                {notes.length} {notes.length === 1 ? "note" : "notes"}
+              </p>
+            </div>
           </div>
-        ) : (
-          <NoteList notes={notes} />
-        )}
-      </div>
-    </section>
+
+          {notesLoading ? (
+            <div className="space-y-3">
+              <div className="h-28 animate-pulse rounded-xl bg-gray-100" />
+              <div className="h-28 animate-pulse rounded-xl bg-gray-100" />
+            </div>
+          ) : (
+            <NoteList notes={notes} />
+          )}
+        </div>
+      </section>
+
+      {/* AI */}
+      <AiSection workspaceId={workspaceId} client={client} />
+    </>
   );
 }
