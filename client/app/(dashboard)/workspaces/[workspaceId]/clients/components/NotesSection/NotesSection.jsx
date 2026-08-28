@@ -16,33 +16,29 @@ export default function NotesSection({ workspaceId, client }) {
   const [noteFormLoading, setNoteFormLoading] = useState(false);
   const [noteError, setNoteError] = useState("");
 
-  function normalizeNotes(noteList) {
+  const normalizeNotes = (noteList) => {
     if (!Array.isArray(noteList)) {
       return [];
     }
 
-    const uniqueNotes = [];
-    const seenIds = new Set();
+    return noteList
+      .filter((note) => note?.id)
+      .reduce((uniqueNotes, note) => {
+        const noteId = String(note.id);
 
-    for (const note of noteList) {
-      if (!note?.id) {
-        continue;
-      }
+        const exists = uniqueNotes.some(
+          (existingNote) => String(existingNote.id) === noteId,
+        );
 
-      const noteId = String(note.id);
+        if (!exists) {
+          uniqueNotes.push(note);
+        }
 
-      if (seenIds.has(noteId)) {
-        continue;
-      }
+        return uniqueNotes;
+      }, []);
+  };
 
-      seenIds.add(noteId);
-      uniqueNotes.push(note);
-    }
-
-    return uniqueNotes;
-  }
-
-  function addNoteIfNew(newNote) {
+  const addNoteIfNew = (newNote) => {
     if (!newNote?.id) {
       return;
     }
@@ -60,9 +56,9 @@ export default function NotesSection({ workspaceId, client }) {
 
       return [newNote, ...currentNotes];
     });
-  }
+  };
 
-  async function loadNotes() {
+  const loadNotes = async () => {
     if (!client) {
       setNotes([]);
       return;
@@ -83,7 +79,7 @@ export default function NotesSection({ workspaceId, client }) {
     }
 
     setNotesLoading(false);
-  }
+  };
 
   useEffect(() => {
     if (!client) {
@@ -113,19 +109,19 @@ export default function NotesSection({ workspaceId, client }) {
         client_id: client.id,
       },
       {
-        connected() {
+        connected: () => {
           console.log("Connected to NotesChannel");
         },
 
-        disconnected() {
+        disconnected: () => {
           console.log("Disconnected from NotesChannel");
         },
 
-        rejected() {
+        rejected: () => {
           console.error("NotesChannel subscription rejected");
         },
 
-        received(data) {
+        received: (data) => {
           if (data.type === "note_created") {
             addNoteIfNew(data.note);
           }
@@ -139,7 +135,7 @@ export default function NotesSection({ workspaceId, client }) {
     };
   }, [workspaceId, client?.id]);
 
-  async function handleCreateNote(formData) {
+  const handleCreateNote = async (formData) => {
     if (!client) {
       setNoteError("Please select a client first.");
       return false;
@@ -174,7 +170,7 @@ export default function NotesSection({ workspaceId, client }) {
     } finally {
       setNoteFormLoading(false);
     }
-  }
+  };
 
   if (!client) {
     return null;
@@ -183,7 +179,6 @@ export default function NotesSection({ workspaceId, client }) {
   return (
     <>
       <section className="mt-8 rounded-2xl border border-gray-200 bg-white">
-        {/* Header */}
         <div className="border-b border-gray-100 px-6 py-5">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100">
@@ -202,7 +197,6 @@ export default function NotesSection({ workspaceId, client }) {
           </div>
         </div>
 
-        {/* Add note */}
         <div className="border-b border-gray-100 px-6 py-6">
           <NoteForm
             loading={noteFormLoading}
@@ -211,7 +205,6 @@ export default function NotesSection({ workspaceId, client }) {
           />
         </div>
 
-        {/* Notes */}
         <div className="px-6 py-6">
           <div className="mb-4 flex items-center justify-between">
             <div>
@@ -236,7 +229,6 @@ export default function NotesSection({ workspaceId, client }) {
         </div>
       </section>
 
-      {/* AI */}
       <AiSection workspaceId={workspaceId} client={client} />
     </>
   );

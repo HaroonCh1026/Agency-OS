@@ -13,7 +13,6 @@ const emptyForm = {
 
 export default function WorkspacesPage() {
   const [workspaces, setWorkspaces] = useState([]);
-
   const [form, setForm] = useState(emptyForm);
   const [editingWorkspace, setEditingWorkspace] = useState(null);
 
@@ -21,15 +20,7 @@ export default function WorkspacesPage() {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // =========================
-  // Load Workspaces
-  // =========================
-
-  useEffect(() => {
-    loadWorkspaces();
-  }, []);
-
-  async function loadWorkspaces() {
+  const loadWorkspaces = async () => {
     setLoading(true);
     setError("");
 
@@ -42,22 +33,18 @@ export default function WorkspacesPage() {
     }
 
     setLoading(false);
-  }
+  };
 
-  // =========================
-  // Reset Form
-  // =========================
+  useEffect(() => {
+    loadWorkspaces();
+  }, []);
 
-  function resetForm() {
+  const resetForm = () => {
     setForm(emptyForm);
     setEditingWorkspace(null);
-  }
+  };
 
-  // =========================
-  // Create / Update
-  // =========================
-
-  async function handleSubmit(event) {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     setError("");
@@ -80,28 +67,7 @@ export default function WorkspacesPage() {
             body: JSON.stringify(form),
           });
 
-      if (response.ok) {
-        if (editingWorkspace) {
-          setWorkspaces((currentWorkspaces) =>
-            currentWorkspaces.map((workspace) =>
-              workspace.id === editingWorkspace.id
-                ? response.data.workspace
-                : workspace,
-            ),
-          );
-
-          alert("Workspace updated successfully.");
-        } else {
-          setWorkspaces((currentWorkspaces) => [
-            ...currentWorkspaces,
-            response.data.workspace,
-          ]);
-
-          alert("Workspace created successfully.");
-        }
-
-        resetForm();
-      } else {
+      if (!response.ok) {
         alert(
           getApiErrorMessage(
             response,
@@ -110,17 +76,36 @@ export default function WorkspacesPage() {
               : "Unable to create workspace.",
           ),
         );
+
+        return;
       }
+
+      const savedWorkspace = response.data.workspace;
+
+      if (editingWorkspace) {
+        setWorkspaces((currentWorkspaces) =>
+          currentWorkspaces.map((workspace) =>
+            workspace.id === savedWorkspace.id ? savedWorkspace : workspace,
+          ),
+        );
+
+        alert("Workspace updated successfully.");
+      } else {
+        setWorkspaces((currentWorkspaces) => [
+          ...currentWorkspaces,
+          savedWorkspace,
+        ]);
+
+        alert("Workspace created successfully.");
+      }
+
+      resetForm();
     } finally {
       setFormLoading(false);
     }
-  }
+  };
 
-  // =========================
-  // Edit Workspace
-  // =========================
-
-  function handleEdit(workspace) {
+  const handleEdit = (workspace) => {
     setEditingWorkspace(workspace);
 
     setForm({
@@ -131,13 +116,9 @@ export default function WorkspacesPage() {
       top: 0,
       behavior: "smooth",
     });
-  }
+  };
 
-  // =========================
-  // Delete Workspace
-  // =========================
-
-  async function handleDelete(workspaceId) {
+  const handleDelete = async (workspaceId) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this workspace?",
     );
@@ -150,24 +131,21 @@ export default function WorkspacesPage() {
       method: "DELETE",
     });
 
-    if (response.ok) {
-      setWorkspaces((currentWorkspaces) =>
-        currentWorkspaces.filter((workspace) => workspace.id !== workspaceId),
-      );
-
-      if (editingWorkspace?.id === workspaceId) {
-        resetForm();
-      }
-
-      alert("Workspace deleted successfully.");
-    } else {
+    if (!response.ok) {
       alert(getApiErrorMessage(response, "Failed to delete workspace."));
+      return;
     }
-  }
 
-  // =========================
-  // Loading UI
-  // =========================
+    setWorkspaces((currentWorkspaces) =>
+      currentWorkspaces.filter((workspace) => workspace.id !== workspaceId),
+    );
+
+    if (editingWorkspace?.id === workspaceId) {
+      resetForm();
+    }
+
+    alert("Workspace deleted successfully.");
+  };
 
   if (loading) {
     return (
@@ -188,13 +166,8 @@ export default function WorkspacesPage() {
     );
   }
 
-  // =========================
-  // Main UI
-  // =========================
-
   return (
     <main className="min-h-full bg-gray-50 p-6">
-      {/* Header */}
       <section className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-medium text-gray-500">Management</p>
@@ -207,7 +180,6 @@ export default function WorkspacesPage() {
         </div>
       </section>
 
-      {/* Error */}
       {error && (
         <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
           {error}
@@ -222,7 +194,6 @@ export default function WorkspacesPage() {
         </div>
       )}
 
-      {/* Workspace Form */}
       <div className="mb-8">
         <WorkspaceForm
           form={form}
@@ -234,7 +205,6 @@ export default function WorkspacesPage() {
         />
       </div>
 
-      {/* Summary */}
       <div className="mb-6 rounded-xl border bg-white p-5 shadow-sm">
         <p className="text-sm text-gray-500">Total Workspaces</p>
 
@@ -243,7 +213,6 @@ export default function WorkspacesPage() {
         </p>
       </div>
 
-      {/* Workspace List */}
       <section>
         <div className="mb-4">
           <h2 className="text-xl font-semibold text-gray-900">

@@ -13,24 +13,26 @@ export default function NoteForm({ loading, error, onSubmit }) {
   const [form, setForm] = useState(initialForm);
   const [files, setFiles] = useState([]);
 
-  function handleChange(event) {
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
     setForm({
       ...form,
-      [event.target.name]: event.target.value,
+      [name]: value,
     });
-  }
+  };
 
-  function handleFileChange(event) {
+  const handleFileChange = (event) => {
     setFiles(Array.from(event.target.files));
-  }
+  };
 
-  function removeFile(index) {
+  const removeFile = (index) => {
     setFiles((currentFiles) =>
       currentFiles.filter((_, fileIndex) => fileIndex !== index),
     );
-  }
+  };
 
-  async function handleSubmit(event) {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!form.title.trim() || !form.content.trim()) {
@@ -52,9 +54,9 @@ export default function NoteForm({ loading, error, onSubmit }) {
     if (success) {
       setForm(initialForm);
       setFiles([]);
-      event.target.reset();
+      event.currentTarget.reset();
     }
-  }
+  };
 
   return (
     <div>
@@ -76,7 +78,6 @@ export default function NoteForm({ loading, error, onSubmit }) {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Title + type */}
         <div className="grid gap-5 md:grid-cols-[1fr_180px]">
           <div>
             <label
@@ -123,7 +124,6 @@ export default function NoteForm({ loading, error, onSubmit }) {
           </div>
         </div>
 
-        {/* Content */}
         <div>
           <label
             htmlFor="note-content"
@@ -144,7 +144,6 @@ export default function NoteForm({ loading, error, onSubmit }) {
           />
         </div>
 
-        {/* Files */}
         <div>
           <label
             htmlFor="note-files"
@@ -212,7 +211,6 @@ export default function NoteForm({ loading, error, onSubmit }) {
           )}
         </div>
 
-        {/* Submit */}
         <div className="flex justify-end border-t border-gray-100 pt-5">
           <button
             type="submit"

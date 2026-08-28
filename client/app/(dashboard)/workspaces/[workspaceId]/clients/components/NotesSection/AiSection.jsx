@@ -10,7 +10,7 @@ export default function AiSection({ workspaceId, client }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleAsk() {
+  const handleAsk = async () => {
     if (!question.trim()) {
       setError("Please enter a question.");
       return;
@@ -44,7 +44,7 @@ export default function AiSection({ workspaceId, client }) {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <section className="mt-8 rounded-2xl border border-gray-200 bg-white">
@@ -80,11 +80,7 @@ export default function AiSection({ workspaceId, client }) {
           />
         </div>
 
-        {error && (
-          <p className="mt-3 text-sm text-red-600">
-            {error}
-          </p>
-        )}
+        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
         <div className="mt-4">
           <button
@@ -99,9 +95,7 @@ export default function AiSection({ workspaceId, client }) {
 
         {answer && (
           <div className="mt-6 rounded-xl bg-gray-50 p-4">
-            <h3 className="mb-2 text-sm font-semibold text-gray-900">
-              Answer
-            </h3>
+            <h3 className="mb-2 text-sm font-semibold text-gray-900">Answer</h3>
 
             <p className="whitespace-pre-wrap text-sm leading-6 text-gray-700">
               {answer}

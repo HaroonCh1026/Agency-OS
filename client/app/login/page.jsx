@@ -16,14 +16,13 @@ export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
 
-  function handleChange(event) {
+  const handleChange = (event) => {
     setForm({
       ...form,
       [event.target.name]: event.target.value,
     });
-  }
-
-  async function handleSubmit(event) {
+  };
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!form.login || !form.password) {
@@ -43,10 +42,7 @@ export default function LoginPage() {
         saveToken(response.data.token);
         router.push("/dashboard");
       } else {
-        alert(
-          response.data?.error ||
-            "Invalid username/email or password.",
-        );
+        alert(response.data?.error || "Invalid username/email or password.");
       }
     } catch (error) {
       console.error(error);
@@ -54,7 +50,7 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -65,9 +61,7 @@ export default function LoginPage() {
             A
           </div>
 
-          <h1 className="mt-4 text-2xl font-bold text-gray-900">
-            Agency OS
-          </h1>
+          <h1 className="mt-4 text-2xl font-bold text-gray-900">Agency OS</h1>
 
           <p className="mt-2 text-sm text-gray-500">
             Sign in to manage your agency
@@ -153,9 +147,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-gray-400">
-          Agency OS
-        </p>
+        <p className="mt-6 text-center text-xs text-gray-400">Agency OS</p>
       </div>
     </main>
   );

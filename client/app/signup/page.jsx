@@ -18,53 +18,53 @@ export default function SignupPage() {
 
   const [loading, setLoading] = useState(false);
 
-  function handleChange(event) {
-    setForm({
-      ...form,
-      [event.target.name]: event.target.value,
+ const handleChange = (event) => {
+  setForm({
+    ...form,
+    [event.target.name]: event.target.value,
+  });
+};
+
+const handleSubmit = async (event) => {
+  event.preventDefault();
+
+  if (
+    !form.username ||
+    !form.email ||
+    !form.phone ||
+    !form.password ||
+    !form.password_confirmation
+  ) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  if (form.password !== form.password_confirmation) {
+    alert("Passwords do not match.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const response = await api("/signup", {
+      method: "POST",
+      body: JSON.stringify(form),
     });
+
+    if (response.ok) {
+      alert("Account created successfully");
+      router.push("/login");
+    } else {
+      alert(response.data?.errors?.join("\n") || "Unable to create account.");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong. Please try again.");
+  } finally {
+    setLoading(false);
   }
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-
-    if (
-      !form.username ||
-      !form.email ||
-      !form.phone ||
-      !form.password ||
-      !form.password_confirmation
-    ) {
-      alert("Please fill in all fields.");
-      return;
-    }
-
-    if (form.password !== form.password_confirmation) {
-      alert("Passwords do not match.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const response = await api("/signup", {
-        method: "POST",
-        body: JSON.stringify(form),
-      });
-
-      if (response.ok) {
-        alert("Account created successfully");
-        router.push("/login");
-      } else {
-        alert(response.data?.errors?.join("\n") || "Unable to create account.");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
+};
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-8">
