@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FileText } from "lucide-react";
-import { api } from "@/services/api";
+import { getNotes, createNote, normalizeNotes } from "@/services/notes";
 import { getApiErrorMessage } from "@/services/apiErrors";
 import { createCableConsumer } from "@/services/cable";
 
@@ -15,28 +15,6 @@ export default function NotesSection({ workspaceId, client }) {
   const [notesLoading, setNotesLoading] = useState(false);
   const [noteFormLoading, setNoteFormLoading] = useState(false);
   const [noteError, setNoteError] = useState("");
-
-  const normalizeNotes = (noteList) => {
-    if (!Array.isArray(noteList)) {
-      return [];
-    }
-
-    return noteList
-      .filter((note) => note?.id)
-      .reduce((uniqueNotes, note) => {
-        const noteId = String(note.id);
-
-        const exists = uniqueNotes.some(
-          (existingNote) => String(existingNote.id) === noteId,
-        );
-
-        if (!exists) {
-          uniqueNotes.push(note);
-        }
-
-        return uniqueNotes;
-      }, []);
-  };
 
   const addNoteIfNew = (newNote) => {
     if (!newNote?.id) {
@@ -67,9 +45,7 @@ export default function NotesSection({ workspaceId, client }) {
     setNotesLoading(true);
     setNoteError("");
 
-    const response = await api(
-      `/workspaces/${workspaceId}/clients/${client.id}/notes`,
-    );
+    const response = await getNotes(workspaceId, client.id);
 
     if (response.ok) {
       setNotes(normalizeNotes(response.data));
@@ -145,13 +121,7 @@ export default function NotesSection({ workspaceId, client }) {
     setNoteError("");
 
     try {
-      const response = await api(
-        `/workspaces/${workspaceId}/clients/${client.id}/notes`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
+      const response = await createNote(workspaceId, client.id, formData);
 
       if (response.ok) {
         addNoteIfNew(response.data.note);

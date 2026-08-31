@@ -54,7 +54,6 @@ export default function NoteForm({ loading, error, onSubmit }) {
     if (success) {
       setForm(initialForm);
       setFiles([]);
-      event.currentTarget.reset();
     }
   };
 

@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api } from "@/services/api";
+import {
+  getClients,
+  createClient,
+  updateClient,
+  deleteClient,
+} from "@/services/clients";
 import { getApiErrorMessage } from "@/services/apiErrors";
 
 import ClientForm from "./ClientForm";
@@ -39,7 +44,7 @@ export default function ClientSection({
     setLoading(true);
     setError("");
 
-    const response = await api(`/workspaces/${workspaceId}/clients`);
+    const response = await getClients(workspaceId);
 
     if (response.ok) {
       setClients(response.data);
@@ -90,14 +95,8 @@ export default function ClientSection({
 
     try {
       const response = editingClient
-        ? await api(`/workspaces/${workspaceId}/clients/${editingClient.id}`, {
-            method: "PATCH",
-            body: JSON.stringify(clientData),
-          })
-        : await api(`/workspaces/${workspaceId}/clients`, {
-            method: "POST",
-            body: JSON.stringify(clientData),
-          });
+        ? await updateClient(workspaceId, editingClient.id, clientData)
+        : await createClient(workspaceId, clientData);
 
       if (!response.ok) {
         setFormError(
@@ -173,12 +172,7 @@ export default function ClientSection({
       return;
     }
 
-    const response = await api(
-      `/workspaces/${workspaceId}/clients/${clientId}`,
-      {
-        method: "DELETE",
-      },
-    );
+    const response = await deleteClient(workspaceId, clientId);
 
     if (!response.ok) {
       setError(getApiErrorMessage(response, "Failed to delete client."));

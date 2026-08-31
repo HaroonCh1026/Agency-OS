@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { api } from "../../services/api";
+import { login } from "../../services/auth";
 import { saveToken } from "../../utils/storage";
 
 export default function LoginPage() {
@@ -22,6 +22,7 @@ export default function LoginPage() {
       [event.target.name]: event.target.value,
     });
   };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -33,10 +34,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await api("/login", {
-        method: "POST",
-        body: JSON.stringify(form),
-      });
+      const response = await login(form);
 
       if (response.ok) {
         saveToken(response.data.token);
