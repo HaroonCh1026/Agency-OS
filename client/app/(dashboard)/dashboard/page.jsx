@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "../../../services/api";
+import api from "../../../services/api";
 import { removeToken } from "../../../utils/storage";
 
 export default function DashboardPage() {

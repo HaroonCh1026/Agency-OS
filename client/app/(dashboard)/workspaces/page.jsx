@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api } from "../../../services/api";
+import {
+  getWorkspaces,
+  createWorkspace,
+  updateWorkspace,
+  deleteWorkspace,
+} from "@/services/workspaces";
 import { getApiErrorMessage } from "../../../services/apiErrors";
 
 import WorkspaceForm from "./components/WorkspaceForm";
@@ -24,7 +29,7 @@ export default function WorkspacesPage() {
     setLoading(true);
     setError("");
 
-    const response = await api("/workspaces");
+    const response = await getWorkspaces();
 
     if (response.ok) {
       setWorkspaces(response.data);
@@ -58,14 +63,8 @@ export default function WorkspacesPage() {
 
     try {
       const response = editingWorkspace
-        ? await api(`/workspaces/${editingWorkspace.id}`, {
-            method: "PATCH",
-            body: JSON.stringify(form),
-          })
-        : await api("/workspaces", {
-            method: "POST",
-            body: JSON.stringify(form),
-          });
+        ? await updateWorkspace(editingWorkspace.id, form)
+        : await createWorkspace(form);
 
       if (!response.ok) {
         alert(
@@ -127,9 +126,7 @@ export default function WorkspacesPage() {
       return;
     }
 
-    const response = await api(`/workspaces/${workspaceId}`, {
-      method: "DELETE",
-    });
+    const response = await deleteWorkspace(workspaceId);
 
     if (!response.ok) {
       alert(getApiErrorMessage(response, "Failed to delete workspace."));

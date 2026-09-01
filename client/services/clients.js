@@ -1,21 +1,13 @@
-import { api } from "./api";
+import api from "./api";
 
 export const getClients = (workspaceId) =>
-  api(`/workspaces/${workspaceId}/clients`);
+  api.get(`/workspaces/${workspaceId}/clients`);
 
 export const createClient = (workspaceId, clientData) =>
-  api(`/workspaces/${workspaceId}/clients`, {
-    method: "POST",
-    body: JSON.stringify(clientData),
-  });
+  api.post(`/workspaces/${workspaceId}/clients`, clientData);
 
 export const updateClient = (workspaceId, clientId, clientData) =>
-  api(`/workspaces/${workspaceId}/clients/${clientId}`, {
-    method: "PATCH",
-    body: JSON.stringify(clientData),
-  });
+  api.patch(`/workspaces/${workspaceId}/clients/${clientId}`, clientData);
 
 export const deleteClient = (workspaceId, clientId) =>
-  api(`/workspaces/${workspaceId}/clients/${clientId}`, {
-    method: "DELETE",
-  });
+  api.delete(`/workspaces/${workspaceId}/clients/${clientId}`);

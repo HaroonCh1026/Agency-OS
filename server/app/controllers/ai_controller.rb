@@ -26,5 +26,7 @@ class AiController < ApplicationController
     answer = NoteAiService.new(client, question).call
 
     render json: { answer: answer }, status: :ok
+  rescue NoteAiService::Error => e
+    render json: { error: e.message }, status: :bad_gateway
   end
 end

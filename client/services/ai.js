@@ -1,10 +1,7 @@
-import { api } from "./api";
+import api from "./api";
 
 export async function askClientAi(workspaceId, clientId, question) {
-  return api(`/workspaces/${workspaceId}/clients/${clientId}/ai`, {
-    method: "POST",
-    body: JSON.stringify({
-      question,
-    }),
+  return api.post(`/workspaces/${workspaceId}/clients/${clientId}/ai`, {
+    question,
   });
 }

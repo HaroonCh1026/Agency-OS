@@ -1,13 +1,10 @@
-import { api } from "./api";
+import api from "./api";
 
 export const getNotes = (workspaceId, clientId) =>
-  api(`/workspaces/${workspaceId}/clients/${clientId}/notes`);
+  api.get(`/workspaces/${workspaceId}/clients/${clientId}/notes`);
 
 export const createNote = (workspaceId, clientId, formData) =>
-  api(`/workspaces/${workspaceId}/clients/${clientId}/notes`, {
-    method: "POST",
-    body: formData,
-  });
+  api.post(`/workspaces/${workspaceId}/clients/${clientId}/notes`, formData);
 
 export const normalizeNotes = (noteList) => {
   if (!Array.isArray(noteList)) {
