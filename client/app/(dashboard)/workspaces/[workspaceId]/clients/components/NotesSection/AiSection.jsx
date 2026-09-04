@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { askClientAi } from "@/services/ai";
 import { getApiErrorMessage } from "@/services/apiErrors";
+import BriefingSection from "./BriefingSection";
 
 export default function AiSection({ workspaceId, client }) {
   const [question, setQuestion] = useState("");
@@ -49,15 +50,11 @@ export default function AiSection({ workspaceId, client }) {
   return (
     <section className="mt-8 rounded-2xl border border-gray-200 bg-white">
       <div className="border-b border-gray-100 px-6 py-5">
-        <div>
-          <h2 className="text-base font-semibold text-gray-900">
-            AI Assistant
-          </h2>
+        <h2 className="text-base font-semibold text-gray-900">AI Assistant</h2>
 
-          <p className="mt-0.5 text-sm text-gray-500">
-            Ask a question about this client's notes.
-          </p>
-        </div>
+        <p className="mt-0.5 text-sm text-gray-500">
+          Ask a question about this client's notes.
+        </p>
       </div>
 
       <div className="px-6 py-6">
@@ -79,6 +76,8 @@ export default function AiSection({ workspaceId, client }) {
             className="w-full resize-none rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-1 focus:ring-gray-200 disabled:bg-gray-50"
           />
         </div>
+
+        <BriefingSection onSelectQuestion={setQuestion} />
 
         {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
