@@ -14,7 +14,7 @@ export default function BriefingSection({ onSelectQuestion }) {
   };
 
   return (
-    <div className="mt-4">
+    <div className="mx-6 mt-4">
       <label
         htmlFor="briefing-question"
         className="mb-2 block text-sm font-medium text-gray-700"
