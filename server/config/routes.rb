@@ -7,7 +7,8 @@ Rails.application.routes.draw do
 
   resources :workspaces do
     resources :clients do
-      resources :notes, only: [:index, :create]
+      resources :notes, only: [ :index, :create ]
+      resources :briefing_documents, only: [ :index ]
 
       post "/ai", to: "ai#create"
     end

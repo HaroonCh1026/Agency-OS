@@ -1,17 +1,50 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { askClientAi } from "@/services/ai";
+import { getBriefingDocuments } from "@/services/briefingDocuments";
 import { getApiErrorMessage } from "@/services/apiErrors";
 import BriefingSection from "./BriefingSection";
+import BriefingHistory from "./BriefingHistory";
 import ErrorBoundary from "./ErrorBoundary";
 
 function AiSectionContent({ workspaceId, client }) {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [briefings, setBriefings] = useState([]);
   const [status, setStatus] = useState("idle");
+  const [historyStatus, setHistoryStatus] = useState("idle");
   const [error, setError] = useState("");
   const [, startTransition] = useTransition();
+
+  const loadBriefings = async () => {
+    if (!client) {
+      setBriefings([]);
+      setHistoryStatus("idle");
+      return;
+    }
+
+    setHistoryStatus("loading");
+
+    try {
+      const response = await getBriefingDocuments(workspaceId, client.id);
+
+      if (response.ok) {
+        setBriefings(response.data || []);
+        setHistoryStatus("success");
+        return;
+      }
+
+      setHistoryStatus("error");
+    } catch (error) {
+      console.error("Failed to load briefing history:", error);
+      setHistoryStatus("error");
+    }
+  };
+
+  useEffect(() => {
+    loadBriefings();
+  }, [workspaceId, client?.id]);
 
   const handleAsk = async () => {
     if (!question.trim()) {
@@ -43,6 +76,9 @@ function AiSectionContent({ workspaceId, client }) {
         });
 
         setStatus("success");
+
+        await loadBriefings();
+
         return;
       }
 
@@ -66,6 +102,7 @@ function AiSectionContent({ workspaceId, client }) {
           Ask a question about this client's notes.
         </p>
       </div>
+
       <BriefingSection onSelectQuestion={setQuestion} />
 
       <div className="px-6 py-6">
@@ -123,11 +160,8 @@ function AiSectionContent({ workspaceId, client }) {
             aria-label="Loading AI response"
           >
             <div className="mb-3 h-4 w-20 rounded bg-gray-200" />
-
             <div className="h-4 w-full rounded bg-gray-200" />
-
             <div className="mt-2 h-4 w-5/6 rounded bg-gray-200" />
-
             <div className="mt-2 h-4 w-4/6 rounded bg-gray-200" />
           </div>
         )}
@@ -140,6 +174,24 @@ function AiSectionContent({ workspaceId, client }) {
               {answer}
             </p>
           </div>
+        )}
+
+        {historyStatus === "loading" && (
+          <div className="mt-8 border-t border-gray-100 pt-6">
+            <p className="text-sm text-gray-500">Loading briefing history...</p>
+          </div>
+        )}
+
+        {historyStatus === "error" && (
+          <div className="mt-8 border-t border-gray-100 pt-6">
+            <p className="text-sm text-red-600">
+              Unable to load briefing history.
+            </p>
+          </div>
+        )}
+
+        {historyStatus === "success" && (
+          <BriefingHistory briefings={briefings} />
         )}
       </div>
     </section>

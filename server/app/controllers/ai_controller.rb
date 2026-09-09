@@ -25,7 +25,15 @@ class AiController < ApplicationController
 
     answer = NoteAiService.new(client, question).call
 
-    render json: { answer: answer }, status: :ok
+    briefing_document = client.briefing_documents.create!(
+      question: question,
+      content: { answer: answer }
+    )
+
+    render json: {
+      answer: answer,
+      briefing_document: briefing_document
+    }, status: :ok
   rescue NoteAiService::Error => e
     render json: { error: e.message }, status: :bad_gateway
   end
