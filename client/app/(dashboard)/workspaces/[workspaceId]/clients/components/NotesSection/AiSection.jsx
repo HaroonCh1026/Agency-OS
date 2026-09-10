@@ -18,7 +18,7 @@ function AiSectionContent({ workspaceId, client }) {
   const [, startTransition] = useTransition();
 
   const loadBriefings = async () => {
-    if (!client) {
+    if (!client?.id) {
       setBriefings([]);
       setHistoryStatus("idle");
       return;
@@ -94,11 +94,11 @@ function AiSectionContent({ workspaceId, client }) {
   const loading = status === "loading";
 
   return (
-    <section className="mt-8 rounded-2xl border border-gray-200 bg-white">
+    <section className="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
       <div className="border-b border-gray-100 px-6 py-5">
         <h2 className="text-base font-semibold text-gray-900">AI Assistant</h2>
 
-        <p className="mt-0.5 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-500">
           Ask a question about this client's notes.
         </p>
       </div>
@@ -121,12 +121,12 @@ function AiSectionContent({ workspaceId, client }) {
             placeholder="e.g. What is the latest activity?"
             rows={3}
             disabled={loading}
-            className="w-full resize-none rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-1 focus:ring-gray-200 disabled:bg-gray-50"
+            className="w-full resize-none rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 disabled:cursor-not-allowed disabled:bg-gray-50"
           />
         </div>
 
         {status === "idle" && (
-          <div className="mt-4 rounded-xl bg-gray-50 p-4">
+          <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50 p-4">
             <p className="text-sm text-gray-500">
               Ask a question about this client's notes to get an AI response.
             </p>
@@ -148,7 +148,7 @@ function AiSectionContent({ workspaceId, client }) {
             type="button"
             onClick={handleAsk}
             disabled={loading}
-            className="rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Asking..." : "Ask AI"}
           </button>
@@ -156,10 +156,10 @@ function AiSectionContent({ workspaceId, client }) {
 
         {status === "loading" && (
           <div
-            className="mt-6 animate-pulse rounded-xl bg-gray-50 p-4"
+            className="mt-6 animate-pulse rounded-xl border border-gray-100 bg-gray-50 p-5"
             aria-label="Loading AI response"
           >
-            <div className="mb-3 h-4 w-20 rounded bg-gray-200" />
+            <div className="mb-4 h-4 w-20 rounded bg-gray-200" />
             <div className="h-4 w-full rounded bg-gray-200" />
             <div className="mt-2 h-4 w-5/6 rounded bg-gray-200" />
             <div className="mt-2 h-4 w-4/6 rounded bg-gray-200" />
@@ -167,7 +167,7 @@ function AiSectionContent({ workspaceId, client }) {
         )}
 
         {status === "success" && (
-          <div className="mt-6 rounded-xl border border-gray-100 bg-gray-50 p-4">
+          <div className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-5">
             <h3 className="mb-2 text-sm font-semibold text-gray-900">Answer</h3>
 
             <p className="whitespace-pre-wrap text-sm leading-6 text-gray-700">
