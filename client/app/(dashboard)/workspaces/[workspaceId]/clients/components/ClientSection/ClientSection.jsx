@@ -1,30 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api } from "@/services/api";
+import {
+  getClients,
+  createClient,
+  updateClient,
+  deleteClient,
+} from "@/services/clients";
 import { getApiErrorMessage } from "@/services/apiErrors";
 
 import ClientForm from "./ClientForm";
 import ClientList from "./ClientList";
+
+const emptyForm = {
+  name: "",
+  company: "",
+  email: "",
+  phone: "",
+  address: "",
+  city: "",
+  country: "",
+  website: "",
+  status: "active",
+};
 
 export default function ClientSection({
   workspaceId,
   selectedClient,
   onClientSelect,
 }) {
-  const emptyForm = {
-    name: "",
-    company: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    country: "",
-    website: "",
-    status: "active",
-    notes: "",
-  };
-
   const [clients, setClients] = useState([]);
   const [form, setForm] = useState(emptyForm);
 
@@ -36,16 +40,11 @@ export default function ClientSection({
   const [error, setError] = useState("");
   const [formError, setFormError] = useState("");
 
-  // Load clients
-  useEffect(() => {
-    loadClients();
-  }, [workspaceId]);
-
-  async function loadClients() {
+  const loadClients = async () => {
     setLoading(true);
     setError("");
 
-    const response = await api(`/workspaces/${workspaceId}/clients`);
+    const response = await getClients(workspaceId);
 
     if (response.ok) {
       setClients(response.data);
@@ -54,24 +53,23 @@ export default function ClientSection({
     }
 
     setLoading(false);
-  }
+  };
 
-  // Reset form
-  function resetForm() {
+  useEffect(() => {
+    loadClients();
+  }, [workspaceId]);
+
+  const resetForm = () => {
     setForm(emptyForm);
     setEditingClient(null);
     setFormError("");
-  }
+  };
 
-  // Select client
-  function handleSelect(client) {
-    if (onClientSelect) {
-      onClientSelect(client);
-    }
-  }
+  const handleSelect = (client) => {
+    onClientSelect?.(client);
+  };
 
-  // Create / Update client
-  async function handleSubmit(event) {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     setFormError("");
@@ -97,38 +95,10 @@ export default function ClientSection({
 
     try {
       const response = editingClient
-        ? await api(`/workspaces/${workspaceId}/clients/${editingClient.id}`, {
-            method: "PATCH",
-            body: JSON.stringify(clientData),
-          })
-        : await api(`/workspaces/${workspaceId}/clients`, {
-            method: "POST",
-            body: JSON.stringify(clientData),
-          });
+        ? await updateClient(workspaceId, editingClient.id, clientData)
+        : await createClient(workspaceId, clientData);
 
-      if (response.ok) {
-        if (editingClient) {
-          const updatedClient = response.data.client;
-
-          setClients((currentClients) =>
-            currentClients.map((client) =>
-              client.id === editingClient.id ? updatedClient : client,
-            ),
-          );
-
-          setEditingClient(updatedClient);
-
-          if (onClientSelect) {
-            onClientSelect(updatedClient);
-          }
-        } else {
-          const newClient = response.data.client;
-
-          setClients((currentClients) => [...currentClients, newClient]);
-
-          resetForm();
-        }
-      } else {
+      if (!response.ok) {
         setFormError(
           getApiErrorMessage(
             response,
@@ -137,14 +107,39 @@ export default function ClientSection({
               : "Unable to create client.",
           ),
         );
+
+        return;
       }
+
+      const savedClient = response.data.client;
+
+      if (editingClient) {
+        setClients((currentClients) =>
+          currentClients.map((client) =>
+            client.id === savedClient.id ? savedClient : client,
+          ),
+        );
+
+        setEditingClient(savedClient);
+        onClientSelect?.(savedClient);
+      } else {
+        setClients((currentClients) => [...currentClients, savedClient]);
+        resetForm();
+      }
+    } catch (error) {
+      console.error("Client request failed:", error);
+
+      setFormError(
+        editingClient
+          ? "Unable to update client. Please try again."
+          : "Unable to create client. Please try again.",
+      );
     } finally {
       setFormLoading(false);
     }
-  }
+  };
 
-  // Edit client
-  function handleEdit(client) {
+  const handleEdit = (client) => {
     setEditingClient(client);
 
     setForm({
@@ -157,23 +152,18 @@ export default function ClientSection({
       country: client.country || "",
       website: client.website || "",
       status: client.status || "active",
-      notes: client.notes || "",
     });
 
     setFormError("");
-
-    if (onClientSelect) {
-      onClientSelect(client);
-    }
+    onClientSelect?.(client);
 
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  }
+  };
 
-  // Delete client
-  async function handleDelete(clientId) {
+  const handleDelete = async (clientId) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this client?",
     );
@@ -182,31 +172,26 @@ export default function ClientSection({
       return;
     }
 
-    const response = await api(
-      `/workspaces/${workspaceId}/clients/${clientId}`,
-      {
-        method: "DELETE",
-      },
+    const response = await deleteClient(workspaceId, clientId);
+
+    if (!response.ok) {
+      setError(getApiErrorMessage(response, "Failed to delete client."));
+      return;
+    }
+
+    setClients((currentClients) =>
+      currentClients.filter((client) => client.id !== clientId),
     );
 
-    if (response.ok) {
-      setClients((currentClients) =>
-        currentClients.filter((client) => client.id !== clientId),
-      );
-
-      if (selectedClient?.id === clientId && onClientSelect) {
-        onClientSelect(null);
-      }
-
-      if (editingClient?.id === clientId) {
-        resetForm();
-      }
-    } else {
-      setError(getApiErrorMessage(response, "Failed to delete client."));
+    if (selectedClient?.id === clientId) {
+      onClientSelect?.(null);
     }
-  }
 
-  // Loading
+    if (editingClient?.id === clientId) {
+      resetForm();
+    }
+  };
+
   if (loading) {
     return (
       <section className="space-y-6">
@@ -230,7 +215,6 @@ export default function ClientSection({
 
   return (
     <section>
-      {/* Error */}
       {error && (
         <div className="mb-6 flex flex-col gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 sm:flex-row sm:items-center sm:justify-between">
           <span>{error}</span>
@@ -245,7 +229,6 @@ export default function ClientSection({
         </div>
       )}
 
-      {/* Client Form */}
       <div className="mb-8">
         <ClientForm
           form={form}
@@ -258,7 +241,6 @@ export default function ClientSection({
         />
       </div>
 
-      {/* Client List */}
       <div>
         <div className="mb-4 flex items-center justify-between">
           <div>

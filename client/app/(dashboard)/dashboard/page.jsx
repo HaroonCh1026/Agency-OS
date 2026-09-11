@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "../../../services/api";
+import api from "../../../services/api";
 import { removeToken } from "../../../utils/storage";
 
 export default function DashboardPage() {
@@ -13,34 +13,34 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    async function loadDashboard() {
-      try {
-        const profileResponse = await api("/profile");
+  const loadDashboard = async () => {
+    try {
+      const profileResponse = await api("/profile");
 
-        if (!profileResponse.ok) {
-          removeToken();
-          router.push("/login");
-          return;
-        }
-
-        setUser(profileResponse.data);
-
-        const workspaceResponse = await api("/workspaces");
-
-        if (workspaceResponse.ok) {
-          setWorkspaces(workspaceResponse.data);
-        } else {
-          setError("Unable to load your workspaces.");
-        }
-      } catch (error) {
-        console.error(error);
-        setError("Something went wrong while loading the dashboard.");
-      } finally {
-        setLoading(false);
+      if (!profileResponse.ok) {
+        removeToken();
+        router.push("/login");
+        return;
       }
-    }
 
+      setUser(profileResponse.data);
+
+      const workspaceResponse = await api("/workspaces");
+
+      if (workspaceResponse.ok) {
+        setWorkspaces(workspaceResponse.data);
+      } else {
+        setError("Unable to load your workspaces.");
+      }
+    } catch (error) {
+      console.error(error);
+      setError("Something went wrong while loading the dashboard.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadDashboard();
   }, [router]);
 
@@ -48,8 +48,10 @@ export default function DashboardPage() {
     return (
       <main className="p-6">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 w-48 rounded bg-gray-200" />
-          <div className="h-4 w-72 rounded bg-gray-200" />
+          <div>
+            <div className="h-8 w-48 rounded bg-gray-200" />
+            <div className="mt-2 h-4 w-72 rounded bg-gray-200" />
+          </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div className="h-28 rounded-xl bg-gray-200" />
@@ -67,7 +69,6 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-full bg-gray-50 p-6">
-      {/* Welcome Section */}
       <section className="mb-8">
         <p className="text-sm font-medium text-gray-500">Overview</p>
 
@@ -80,14 +81,12 @@ export default function DashboardPage() {
         </p>
       </section>
 
-      {/* Error */}
       {error && (
         <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
           {error}
         </div>
       )}
 
-      {/* Stats */}
       <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-xl border bg-white p-5 shadow-sm">
           <p className="text-sm text-gray-500">Total Workspaces</p>
@@ -120,7 +119,6 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* Workspaces */}
       <section>
         <div className="mb-4 flex items-center justify-between">
           <div>

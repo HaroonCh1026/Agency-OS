@@ -10,18 +10,26 @@ import {
   Trash2,
 } from "lucide-react";
 
-export default function ClientCard({
-  client,
-  selected,
-  onSelect,
-  onEdit,
-  onDelete,
-}) {
+const ClientCard = ({ client, selected, onSelect, onEdit, onDelete }) => {
   const location = [client.city, client.country].filter(Boolean).join(", ");
+
+  const handleSelect = () => {
+    onSelect(client);
+  };
+
+  const handleEdit = (event) => {
+    event.stopPropagation();
+    onEdit(client);
+  };
+
+  const handleDelete = (event) => {
+    event.stopPropagation();
+    onDelete(client.id);
+  };
 
   return (
     <article
-      onClick={() => onSelect(client)}
+      onClick={handleSelect}
       className={`group cursor-pointer rounded-2xl border bg-white p-5 transition ${
         selected
           ? "border-gray-900 shadow-md"
@@ -89,10 +97,7 @@ export default function ClientCard({
       <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
         <button
           type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            onSelect(client);
-          }}
+          onClick={handleSelect}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-700 transition hover:text-gray-900"
         >
           View client
@@ -102,10 +107,7 @@ export default function ClientCard({
         <div className="flex items-center gap-1">
           <button
             type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              onEdit(client);
-            }}
+            onClick={handleEdit}
             className="rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
             aria-label={`Edit ${client.name}`}
           >
@@ -114,10 +116,7 @@ export default function ClientCard({
 
           <button
             type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              onDelete(client.id);
-            }}
+            onClick={handleDelete}
             className="rounded-lg p-2 text-gray-400 transition hover:bg-red-50 hover:text-red-600"
             aria-label={`Delete ${client.name}`}
           >
@@ -127,4 +126,6 @@ export default function ClientCard({
       </div>
     </article>
   );
-}
+};
+
+export default ClientCard;

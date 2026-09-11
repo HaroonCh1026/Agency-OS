@@ -6,11 +6,11 @@ import { removeToken } from "../../utils/storage";
 export default function Navbar() {
   const router = useRouter();
 
-  function handleLogout() {
+  const handleLogout = () => {
     removeToken();
-    router.push("/login");
-  }
 
+    router.push("/login");
+  };
   return (
     <header className="flex h-16 items-center justify-between border-b bg-white px-4 sm:px-6">
       {/* Brand */}
