@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+
   private
 
   def generate_token(user)
@@ -11,14 +12,18 @@ class ApplicationController < ActionController::API
   end
 
   def decoded_token
-    auth_header = request.headers["Authorization"]
+    auth_header = request.headers["Authorization"].to_s
+    scheme, token = auth_header.split(" ", 2)
 
-    return nil unless auth_header
-
-    token = auth_header.split(" ").last
+    return nil unless scheme == "Bearer" && token.present?
 
     begin
-      JWT.decode(token, ENV["JWT_SECRET"], true, algorithm: "HS256")
+      JWT.decode(
+        token,
+        ENV["JWT_SECRET"],
+        true,
+        algorithm: "HS256"
+      )
     rescue JWT::DecodeError, JWT::ExpiredSignature
       nil
     end
@@ -38,4 +43,5 @@ class ApplicationController < ActionController::API
       render json: { error: "Unauthorized" }, status: :unauthorized
     end
   end
+
 end

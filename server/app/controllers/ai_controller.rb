@@ -1,6 +1,8 @@
 class AiController < ApplicationController
   before_action :authenticate_user
 
+  MAX_QUESTION_LENGTH = 2_000
+
   def create
     workspace = @current_user.workspaces.find_by(id: params[:workspace_id])
 
@@ -18,8 +20,15 @@ class AiController < ApplicationController
 
     question = params[:question]
 
-    unless question
+    unless question.present?
       render json: { error: "Question parameter is required" }, status: :bad_request
+      return
+    end
+
+    if question.length > MAX_QUESTION_LENGTH
+      render json: {
+        error: "Question is too long. Maximum length is #{MAX_QUESTION_LENGTH} characters."
+      }, status: :bad_request
       return
     end
 
@@ -34,7 +43,14 @@ class AiController < ApplicationController
       answer: answer,
       briefing_document: briefing_document
     }, status: :ok
+
   rescue NoteAiService::Error => e
     render json: { error: e.message }, status: :bad_gateway
+
+  rescue ActiveRecord::RecordInvalid => e
+    render json: {
+      error: "Unable to save briefing.",
+      details: e.record.errors.full_messages
+    }, status: :unprocessable_entity
   end
 end
