@@ -9,7 +9,7 @@ default: &default
 
 development:
   <<: *default
-  database: agency_os_development
+  url: <%= ENV["DATABASE_URL"] %>
 
 test:
   <<: *default
@@ -21,17 +21,14 @@ production:
     database: agency_os_production
     username: <%= ENV["DATABASE_USERNAME"] %>
     password: <%= ENV["AGENCY_OS_DATABASE_PASSWORD"] %>
-
   cache:
     <<: *primary_production
     database: agency_os_production_cache
     migrations_paths: db/cache_migrate
-
   queue:
     <<: *primary_production
     database: agency_os_production_queue
     migrations_paths: db/queue_migrate
-
   cable:
     <<: *primary_production
     database: agency_os_production_cable

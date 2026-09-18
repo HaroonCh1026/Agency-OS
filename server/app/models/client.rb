@@ -1,5 +1,6 @@
 class Client < ApplicationRecord
   belongs_to :workspace
+
   has_many :notes, dependent: :destroy
   has_many :briefing_documents, dependent: :destroy
 
@@ -7,6 +8,10 @@ class Client < ApplicationRecord
 
   validates :email,
             format: { with: URI::MailTo::EMAIL_REGEXP },
+            allow_blank: true
+
+  validates :phone,
+            format: { with: /\A[0-9+\-\s()]+\z/ },
             allow_blank: true
 
   validates :status,
