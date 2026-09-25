@@ -1,6 +1,7 @@
 class Client < ApplicationRecord
   belongs_to :workspace
-has_many :notes, dependent: :destroy
+  has_many :notes, dependent: :destroy
+  has_many :briefing_documents, dependent: :destroy
 
   validates :name, presence: true
 
@@ -9,5 +10,5 @@ has_many :notes, dependent: :destroy
             allow_blank: true
 
   validates :status,
-            inclusion: { in: ["active", "inactive"] }
+            inclusion: { in: [ "active", "inactive" ] }
 end

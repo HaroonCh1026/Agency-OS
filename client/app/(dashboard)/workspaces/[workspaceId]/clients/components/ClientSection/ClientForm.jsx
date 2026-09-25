@@ -11,12 +11,12 @@ export default function ClientForm({
   onSubmit,
   onCancel,
 }) {
-  function handleChange(event) {
+  const handleChange = (event) => {
     setForm({
       ...form,
       [event.target.name]: event.target.value,
     });
-  }
+  };
 
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">

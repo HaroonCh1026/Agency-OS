@@ -1,26 +1,22 @@
 class ClientsController < ApplicationController
   before_action :authenticate_user
   before_action :set_workspace
-  before_action :set_client, only: [:show, :update, :destroy]
+  before_action :set_client, only: [:show, :update, :destroy ]
 
   def index
-    clients = @workspace.clients
-
-    render json: clients, status: :ok
+    @clients = @workspace.clients
   end
 
   def show
-    render json: @client, status: :ok
   end
 
   def create
     client = @workspace.clients.new(client_params)
 
     if client.save
-      render json: {
-        message: "Client created successfully",
-        client: client
-      }, status: :created
+      @client = client
+
+      render :create, status: :created
     else
       render json: {
         errors: client.errors.full_messages
@@ -30,10 +26,7 @@ class ClientsController < ApplicationController
 
   def update
     if @client.update(client_params)
-      render json: {
-        message: "Client updated successfully",
-        client: @client
-      }, status: :ok
+      render :update, status: :ok
     else
       render json: {
         errors: @client.errors.full_messages
@@ -42,11 +35,9 @@ class ClientsController < ApplicationController
   end
 
   def destroy
-    @client.destroy
+  @client.destroy
 
-    render json: {
-      message: "Client deleted successfully"
-    }, status: :ok
+  render :destroy, status: :ok
   end
 
   private
@@ -77,7 +68,6 @@ class ClientsController < ApplicationController
       :city,
       :country,
       :website,
-      :notes,
       :status
     )
   end

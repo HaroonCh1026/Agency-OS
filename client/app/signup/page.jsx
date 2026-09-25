@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { api } from "../../services/api";
+import { signup } from "../../services/auth";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -18,14 +18,14 @@ export default function SignupPage() {
 
   const [loading, setLoading] = useState(false);
 
-  function handleChange(event) {
+  const handleChange = (event) => {
     setForm({
       ...form,
       [event.target.name]: event.target.value,
     });
-  }
+  };
 
-  async function handleSubmit(event) {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (
@@ -47,10 +47,7 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const response = await api("/signup", {
-        method: "POST",
-        body: JSON.stringify(form),
-      });
+      const response = await signup(form);
 
       if (response.ok) {
         alert("Account created successfully");
@@ -64,7 +61,7 @@ export default function SignupPage() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-8">
