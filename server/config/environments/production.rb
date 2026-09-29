@@ -26,6 +26,16 @@ Rails.application.configure do
   # Force all access to the app over SSL.
   config.force_ssl = true
 
+  # Allow Action Cable (WebSocket) connections from the deployed frontend.
+  # Set FRONTEND_ORIGINS on Render, comma-separated, no trailing slashes, e.g.
+  # https://agency-os-brown-one.vercel.app,http://localhost:3000
+  frontend_origins = ENV.fetch(
+    "FRONTEND_ORIGINS",
+    "https://agency-os-brown-one.vercel.app"
+  ).split(",").map(&:strip).reject(&:empty?)
+
+  config.action_cable.allowed_request_origins = frontend_origins
+
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [:request_id]
 
