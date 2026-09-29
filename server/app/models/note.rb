@@ -2,10 +2,9 @@ class Note < ApplicationRecord
   belongs_to :client
   has_many_attached :files
 
-  after_create :broadcast_created
+  after_create_commit :broadcast_created
 
   validates :title, presence: true
-
   validates :content, presence: true
 
   validates :note_type,
@@ -37,5 +36,7 @@ class Note < ApplicationRecord
         }
       }
     )
+  rescue => e
+    Rails.logger.error("Note broadcast failed: #{e.class}: #{e.message}")
   end
 end
