@@ -11,6 +11,7 @@ export default function DashboardLayout({ children }) {
   const router = useRouter();
 
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const token = getToken();
@@ -34,12 +35,18 @@ export default function DashboardLayout({ children }) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Navbar */}
-      <Navbar />
+      <Navbar
+        mobileMenuOpen={mobileMenuOpen}
+        onMenuToggle={() => setMobileMenuOpen((prev) => !prev)}
+      />
 
       {/* Dashboard Body */}
       <div className="flex min-h-[calc(100vh-64px)]">
-        {/* Sidebar */}
-        <Sidebar />
+        {/* Sidebar (desktop + mobile drawer) */}
+        <Sidebar
+          mobileMenuOpen={mobileMenuOpen}
+          onClose={() => setMobileMenuOpen(false)}
+        />
 
         {/* Main Content */}
         <main className="min-w-0 flex-1 overflow-y-auto">{children}</main>

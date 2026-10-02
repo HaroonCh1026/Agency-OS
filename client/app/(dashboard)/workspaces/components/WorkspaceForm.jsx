@@ -16,13 +16,13 @@ export default function WorkspaceForm({
   }
 
   return (
-    <div className="rounded-xl border bg-white p-6 shadow-sm">
-      <div className="mb-6">
+    <div className="rounded-xl border bg-white p-4 shadow-sm sm:p-6">
+      <div className="mb-5 sm:mb-6">
         <h2 className="text-lg font-semibold text-gray-900">
           {editingWorkspace ? "Edit Workspace" : "Create Workspace"}
         </h2>
 
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm leading-5 text-gray-500">
           {editingWorkspace
             ? "Update the workspace name."
             : "Create a new workspace for your agency."}
@@ -45,15 +45,15 @@ export default function WorkspaceForm({
             placeholder="e.g. Marketing Team"
             value={form.name}
             onChange={handleChange}
-            className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+            className="w-full min-w-0 rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
           />
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <button
             type="submit"
             disabled={loading}
-            className="rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             {loading
               ? editingWorkspace
@@ -69,7 +69,7 @@ export default function WorkspaceForm({
               type="button"
               onClick={onCancel}
               disabled={loading}
-              className="rounded-lg border px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-lg border px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               Cancel
             </button>
