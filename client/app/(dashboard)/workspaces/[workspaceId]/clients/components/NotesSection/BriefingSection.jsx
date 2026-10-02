@@ -14,7 +14,7 @@ export default function BriefingSection({ onSelectQuestion }) {
   };
 
   return (
-    <div className="mx-6 mt-5 rounded-xl border border-gray-200 bg-gray-50 p-5">
+    <div className="mx-4 mt-5 rounded-xl border border-gray-200 bg-gray-50 p-4 sm:mx-6 sm:p-5">
       <label
         htmlFor="briefing-question"
         className="mb-2 block text-sm font-semibold text-gray-900"
@@ -22,7 +22,7 @@ export default function BriefingSection({ onSelectQuestion }) {
         Briefing Question
       </label>
 
-      <p className="mb-3 text-sm text-gray-500">
+      <p className="mb-3 text-sm leading-5 text-gray-500">
         Choose a predefined question to get insights about this client.
       </p>
 
@@ -30,7 +30,7 @@ export default function BriefingSection({ onSelectQuestion }) {
         id="briefing-question"
         value={selectedQuestion}
         onChange={handleChange}
-        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition hover:border-gray-300 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+        className="w-full min-w-0 rounded-xl border border-gray-200 bg-white px-3 py-3 text-sm text-gray-900 shadow-sm outline-none transition hover:border-gray-300 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 sm:px-4"
       >
         <option value="">Select briefing</option>
 

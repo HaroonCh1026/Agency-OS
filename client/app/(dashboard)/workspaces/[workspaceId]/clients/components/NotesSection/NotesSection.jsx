@@ -149,25 +149,27 @@ export default function NotesSection({ workspaceId, client }) {
   return (
     <>
       <section className="mt-8 rounded-2xl border border-gray-200 bg-white">
-        <div className="border-b border-gray-100 px-6 py-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100">
+        {/* Header */}
+        <div className="border-b border-gray-100 px-4 py-4 sm:px-6 sm:py-5">
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-100">
               <FileText className="h-4 w-4 text-gray-600" />
             </div>
 
-            <div>
+            <div className="min-w-0">
               <h2 className="text-base font-semibold text-gray-900">
                 Notes & Activity
               </h2>
 
-              <p className="mt-0.5 text-sm text-gray-500">
+              <p className="mt-0.5 text-sm leading-5 text-gray-500">
                 Keep track of conversations and important client details.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="border-b border-gray-100 px-6 py-6">
+        {/* Note form */}
+        <div className="border-b border-gray-100 px-4 py-5 sm:px-6 sm:py-6">
           <NoteForm
             loading={noteFormLoading}
             error={noteError}
@@ -175,9 +177,10 @@ export default function NotesSection({ workspaceId, client }) {
           />
         </div>
 
-        <div className="px-6 py-6">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
+        {/* Notes list */}
+        <div className="px-4 py-5 sm:px-6 sm:py-6">
+          <div className="mb-4 flex items-start justify-between gap-3">
+            <div className="min-w-0">
               <h3 className="text-sm font-semibold text-gray-900">
                 Recent notes
               </h3>

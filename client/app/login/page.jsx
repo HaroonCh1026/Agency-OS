@@ -51,10 +51,10 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md">
+    <main className="flex min-h-screen min-w-0 items-center justify-center bg-gray-50 px-4 py-6 sm:py-8">
+      <div className="w-full max-w-md min-w-0">
         {/* Brand */}
-        <div className="mb-8 text-center">
+        <div className="mb-6 text-center sm:mb-8">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gray-900 text-lg font-bold text-white">
             A
           </div>
@@ -67,13 +67,13 @@ export default function LoginPage() {
         </div>
 
         {/* Login Card */}
-        <div className="rounded-2xl border bg-white p-6 shadow-sm sm:p-8">
-          <div className="mb-6">
+        <div className="rounded-2xl border bg-white p-5 shadow-sm sm:p-8">
+          <div className="mb-5 sm:mb-6">
             <h2 className="text-xl font-semibold text-gray-900">
               Welcome back
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm leading-5 text-gray-500">
               Enter your account details to continue.
             </p>
           </div>
@@ -96,7 +96,7 @@ export default function LoginPage() {
                 value={form.login}
                 onChange={handleChange}
                 autoComplete="username"
-                className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+                className="w-full min-w-0 rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
               />
             </div>
 
@@ -117,7 +117,7 @@ export default function LoginPage() {
                 value={form.password}
                 onChange={handleChange}
                 autoComplete="current-password"
-                className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+                className="w-full min-w-0 rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
               />
             </div>
 
@@ -145,7 +145,9 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-gray-400">Agency OS</p>
+        <p className="mt-5 text-center text-xs text-gray-400 sm:mt-6">
+          Agency OS
+        </p>
       </div>
     </main>
   );

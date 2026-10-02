@@ -30,17 +30,17 @@ const ClientCard = ({ client, selected, onSelect, onEdit, onDelete }) => {
   return (
     <article
       onClick={handleSelect}
-      className={`group cursor-pointer rounded-2xl border bg-white p-5 transition ${
+      className={`group cursor-pointer rounded-2xl border bg-white p-4 transition sm:p-5 ${
         selected
           ? "border-gray-900 shadow-md"
           : "border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md"
       }`}
     >
       {/* Top */}
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-3 sm:gap-4">
         <div className="flex min-w-0 items-center gap-3">
           <div
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${
               selected ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-600"
             }`}
           >
@@ -72,39 +72,39 @@ const ClientCard = ({ client, selected, onSelect, onEdit, onDelete }) => {
       {/* Details */}
       <div className="mt-5 space-y-2.5">
         {client.email && (
-          <div className="flex items-center gap-2.5 text-sm text-gray-500">
+          <div className="flex min-w-0 items-center gap-2.5 text-sm text-gray-500">
             <Mail className="h-4 w-4 shrink-0 text-gray-400" />
-            <span className="truncate">{client.email}</span>
+            <span className="min-w-0 truncate">{client.email}</span>
           </div>
         )}
 
         {client.phone && (
-          <div className="flex items-center gap-2.5 text-sm text-gray-500">
+          <div className="flex min-w-0 items-center gap-2.5 text-sm text-gray-500">
             <Phone className="h-4 w-4 shrink-0 text-gray-400" />
-            <span>{client.phone}</span>
+            <span className="min-w-0 truncate">{client.phone}</span>
           </div>
         )}
 
         {location && (
-          <div className="flex items-center gap-2.5 text-sm text-gray-500">
+          <div className="flex min-w-0 items-center gap-2.5 text-sm text-gray-500">
             <MapPin className="h-4 w-4 shrink-0 text-gray-400" />
-            <span className="truncate">{location}</span>
+            <span className="min-w-0 truncate">{location}</span>
           </div>
         )}
       </div>
 
       {/* Actions */}
-      <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
+      <div className="mt-5 flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
         <button
           type="button"
           onClick={handleSelect}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-700 transition hover:text-gray-900"
+          className="inline-flex min-w-0 items-center gap-1.5 text-sm font-medium text-gray-700 transition hover:text-gray-900"
         >
-          View client
-          <ChevronRight className="h-4 w-4" />
+          <span className="truncate">View client</span>
+          <ChevronRight className="h-4 w-4 shrink-0" />
         </button>
 
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1">
           <button
             type="button"
             onClick={handleEdit}

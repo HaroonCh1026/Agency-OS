@@ -62,7 +62,7 @@ export default function NoteForm({ loading, error, onSubmit }) {
       <div className="mb-5">
         <h3 className="text-sm font-semibold text-gray-900">Add a note</h3>
 
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm leading-5 text-gray-500">
           Add information, meeting details, or files for this client.
         </p>
       </div>
@@ -70,15 +70,15 @@ export default function NoteForm({ loading, error, onSubmit }) {
       {error && (
         <div
           role="alert"
-          className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
+          className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-5 text-red-600"
         >
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="grid gap-5 md:grid-cols-[1fr_180px]">
-          <div>
+        <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_180px]">
+          <div className="min-w-0">
             <label
               htmlFor="note-title"
               className="mb-1.5 block text-sm font-medium text-gray-700"
@@ -94,11 +94,11 @@ export default function NoteForm({ loading, error, onSubmit }) {
               value={form.title}
               onChange={handleChange}
               disabled={loading}
-              className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-50"
+              className="w-full min-w-0 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-50"
             />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <label
               htmlFor="note-type"
               className="mb-1.5 block text-sm font-medium text-gray-700"
@@ -112,7 +112,7 @@ export default function NoteForm({ loading, error, onSubmit }) {
               value={form.note_type}
               onChange={handleChange}
               disabled={loading}
-              className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-50"
+              className="w-full min-w-0 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900 disabled:cursor-not-allowed disabled:bg-gray-50"
             >
               <option value="general">General</option>
               <option value="meeting">Meeting</option>
@@ -153,7 +153,7 @@ export default function NoteForm({ loading, error, onSubmit }) {
 
           <label
             htmlFor="note-files"
-            className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 px-5 py-6 text-center transition hover:border-gray-400 hover:bg-gray-50 ${
+            className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 px-4 py-6 text-center transition hover:border-gray-400 hover:bg-gray-50 sm:px-5 ${
               loading ? "pointer-events-none opacity-50" : ""
             }`}
           >
@@ -165,7 +165,7 @@ export default function NoteForm({ loading, error, onSubmit }) {
               Choose files
             </p>
 
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs leading-5 text-gray-500">
               You can attach multiple files
             </p>
 
@@ -185,12 +185,12 @@ export default function NoteForm({ loading, error, onSubmit }) {
               {files.map((file, index) => (
                 <div
                   key={`${file.name}-${file.lastModified}`}
-                  className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5"
+                  className="flex min-w-0 items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5"
                 >
                   <div className="flex min-w-0 items-center gap-2.5">
                     <File className="h-4 w-4 shrink-0 text-gray-500" />
 
-                    <span className="truncate text-sm text-gray-700">
+                    <span className="min-w-0 truncate text-sm text-gray-700">
                       {file.name}
                     </span>
                   </div>
@@ -214,7 +214,7 @@ export default function NoteForm({ loading, error, onSubmit }) {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             <Send className="h-4 w-4" />
 

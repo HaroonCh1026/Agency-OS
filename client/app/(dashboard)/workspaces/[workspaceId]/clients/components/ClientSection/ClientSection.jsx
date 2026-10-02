@@ -194,11 +194,11 @@ export default function ClientSection({
 
   if (loading) {
     return (
-      <section className="space-y-6">
-        <div className="animate-pulse space-y-6">
+      <section className="space-y-5 sm:space-y-6">
+        <div className="animate-pulse space-y-5 sm:space-y-6">
           <div>
             <div className="h-8 w-32 rounded bg-gray-200" />
-            <div className="mt-2 h-4 w-64 rounded bg-gray-200" />
+            <div className="mt-2 h-4 w-64 max-w-full rounded bg-gray-200" />
           </div>
 
           <div className="h-72 rounded-xl bg-gray-200" />
@@ -214,22 +214,22 @@ export default function ClientSection({
   }
 
   return (
-    <section>
+    <section className="min-w-0">
       {error && (
         <div className="mb-6 flex flex-col gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 sm:flex-row sm:items-center sm:justify-between">
-          <span>{error}</span>
+          <span className="wrap-break-word">{error}</span>
 
           <button
             type="button"
             onClick={loadClients}
-            className="font-medium underline hover:no-underline"
+            className="shrink-0 self-start font-medium underline hover:no-underline sm:self-auto"
           >
             Try again
           </button>
         </div>
       )}
 
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <ClientForm
           form={form}
           setForm={setForm}
@@ -241,9 +241,9 @@ export default function ClientSection({
         />
       </div>
 
-      <div>
-        <div className="mb-4 flex items-center justify-between">
-          <div>
+      <div className="min-w-0">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <div className="min-w-0">
             <h2 className="text-lg font-semibold text-gray-900">
               Your Clients
             </h2>

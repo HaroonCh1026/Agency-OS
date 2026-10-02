@@ -21,15 +21,15 @@ export default function ClientForm({
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
       {/* Header */}
-      <div className="border-b border-gray-100 px-6 py-5">
-        <div className="flex items-start justify-between gap-4">
-          <div>
+      <div className="border-b border-gray-100 px-4 py-4 sm:px-6 sm:py-5">
+        <div className="flex items-start justify-between gap-3 sm:gap-4">
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-100">
                 <User className="h-4 w-4 text-gray-600" />
               </div>
 
-              <div>
+              <div className="min-w-0">
                 <h2 className="text-base font-semibold text-gray-900">
                   {editingClient ? "Edit client" : "Add client"}
                 </h2>
@@ -48,7 +48,7 @@ export default function ClientForm({
               type="button"
               onClick={onCancel}
               disabled={loading}
-              className="rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="shrink-0 rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
               aria-label="Cancel editing"
             >
               <X className="h-4 w-4" />
@@ -59,13 +59,13 @@ export default function ClientForm({
 
       {/* Error */}
       {error && (
-        <div className="mx-6 mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div className="mx-4 mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 sm:mx-6 sm:mt-5">
           {error}
         </div>
       )}
 
       {/* Form */}
-      <form onSubmit={onSubmit} className="p-6">
+      <form onSubmit={onSubmit} className="p-4 sm:p-6">
         <div className="grid gap-x-5 gap-y-5 md:grid-cols-2">
           {/* Name */}
           <div>
@@ -283,13 +283,13 @@ export default function ClientForm({
         </div>
 
         {/* Actions */}
-        <div className="mt-6 flex items-center justify-end gap-3 border-t border-gray-100 pt-5">
+        <div className="mt-6 flex flex-col-reverse gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:items-center sm:justify-end">
           {editingClient && (
             <button
               type="button"
               onClick={onCancel}
               disabled={loading}
-              className="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               Cancel
             </button>
@@ -298,7 +298,7 @@ export default function ClientForm({
           <button
             type="submit"
             disabled={loading}
-            className="rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             {loading
               ? editingClient

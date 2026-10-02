@@ -9,12 +9,12 @@ export default function ClientList({
 }) {
   if (clients.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
+      <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-6 text-center sm:p-10">
         <h3 className="text-sm font-semibold text-gray-900">
           No clients found
         </h3>
 
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm leading-5 text-gray-500">
           Add your first client to get started.
         </p>
       </div>

@@ -146,11 +146,11 @@ export default function WorkspacesPage() {
 
   if (loading) {
     return (
-      <main className="min-h-full bg-gray-50 p-6">
-        <div className="animate-pulse space-y-6">
+      <main className="min-h-full min-w-0 bg-gray-50 px-4 py-5 sm:p-6">
+        <div className="animate-pulse space-y-5 sm:space-y-6">
           <div>
             <div className="h-8 w-40 rounded bg-gray-200" />
-            <div className="mt-2 h-4 w-64 rounded bg-gray-200" />
+            <div className="mt-2 h-4 w-64 max-w-full rounded bg-gray-200" />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -164,34 +164,36 @@ export default function WorkspacesPage() {
   }
 
   return (
-    <main className="min-h-full bg-gray-50 p-6">
-      <section className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+    <main className="min-h-full min-w-0 bg-gray-50 px-4 py-5 sm:p-6 lg:px-8">
+      <section className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <p className="text-sm font-medium text-gray-500">Management</p>
 
-          <h1 className="mt-1 text-3xl font-bold text-gray-900">Workspaces</h1>
+          <h1 className="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">
+            Workspaces
+          </h1>
 
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 max-w-2xl text-sm leading-5 text-gray-500">
             Create and manage your agency workspaces.
           </p>
         </div>
       </section>
 
       {error && (
-        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-          {error}
+        <div className="mb-6 flex flex-col gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 sm:flex-row sm:items-center">
+          <span className="min-w-0 wrap-break-word">{error}</span>
 
           <button
             type="button"
             onClick={loadWorkspaces}
-            className="ml-3 font-medium underline hover:no-underline"
+            className="shrink-0 self-start font-medium underline hover:no-underline sm:ml-3 sm:self-auto"
           >
             Try again
           </button>
         </div>
       )}
 
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <WorkspaceForm
           form={form}
           setForm={setForm}
@@ -202,7 +204,7 @@ export default function WorkspacesPage() {
         />
       </div>
 
-      <div className="mb-6 rounded-xl border bg-white p-5 shadow-sm">
+      <div className="mb-6 rounded-xl border bg-white p-4 shadow-sm sm:p-5">
         <p className="text-sm text-gray-500">Total Workspaces</p>
 
         <p className="mt-1 text-2xl font-bold text-gray-900">
@@ -210,13 +212,13 @@ export default function WorkspacesPage() {
         </p>
       </div>
 
-      <section>
+      <section className="min-w-0">
         <div className="mb-4">
           <h2 className="text-xl font-semibold text-gray-900">
             Your Workspaces
           </h2>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm leading-5 text-gray-500">
             Select a workspace to manage its clients.
           </p>
         </div>
